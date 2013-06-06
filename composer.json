@@ -1,0 +1,12 @@
+{
+    "name": "joshmoody/mock-data-generator",
+    "description": "Generate realistic test data.",
+    "homepage": "https://github.com/joshmoody/mock-data-generator",
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Josh Moody",
+            "email": "joshmoody@facebook.com"
+        }
+    ]
+}
