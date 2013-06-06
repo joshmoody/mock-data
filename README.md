@@ -187,3 +187,14 @@ The geographic and demographic source data used in this library was derived from
 - http://www.50states.com/tools/postal.htm
 - https://www.census.gov/genealogy/www/data/1990surnames/names_files.html
 - http://www.livingplaces.com/streets/most-popular_street_names.html
+
+
+## Installation via Composer
+    composer require-dev joshmoody/mock-data-generator dev-master
+    
+https://packagist.org/packages/joshmoody/mock-data-generator
+
+## License and copyright
+Licensed under the BSD (Berkeley Software Distribution) License.
+Copyright (c) 2013, Josh Moody. All rights reserved.
+
