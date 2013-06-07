@@ -190,7 +190,7 @@ The geographic and demographic source data used in this library was derived from
 
 
 ## Installation via Composer
-    composer require-dev joshmoody/mock-data-generator dev-master
+    composer require --dev joshmoody/mock-data-generator dev-master
     
 https://packagist.org/packages/joshmoody/mock-data-generator
 
