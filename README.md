@@ -179,6 +179,6 @@ The geographic and demographic source data used in this library was derived from
 
 
 ## License and copyright
-Licensed under the BSD (Berkeley Software Distribution) License.
+Licensed under the MIT License.
 Copyright (c) 2013, Josh Moody. All rights reserved.
 
