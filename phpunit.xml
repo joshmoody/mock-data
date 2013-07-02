@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="tests/bootstrap.php">
+
+	<testsuites>
+        <testsuite name="Mock Data Generator Test Suite">
+            <directory suffix="Tests.php">./tests/joshmoody/Mock</directory>
+        </testsuite>
+    </testsuites>
+	
+	<php>
+	  <env name="db_hostname" value="localhost"/>
+	  <env name="db_username" value="root"/>
+	  <env name="db_password" value="root"/>
+	  <env name="db_database" value="mock_data"/>
+	  <env name="db_driver" value="mysql"/>
+	</php>
+
+</phpunit>

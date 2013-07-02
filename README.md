@@ -14,113 +14,116 @@ With a simple loop, I can generate a database representing 100,000 people to use
 ## Mock Data Generation
 Many different types of mock data can be generated with this library.  From basic building blocks like numbers and dates to a Person with just about every attribute you need from a Date of Birth to Driver's License and Credit Card.
 
-	$person = get_person($state_code);
+	$opts = array('hostname' => 'localhost', 'username' => 'root', 'password' => 'root', 'database' => 'mock_data', 'db_driver' => 'mysql');
+	$generator = new joshmoody\Mock\Generator($opts);
+	
+	$person = $generator->getPerson();
 	print_r($person);
 
 Example output:
-		
-	stdClass Object
+
+	stdClass Object	
 	(
-	    [guid] => 6461aa1a-d837-31a4-a53e-209c53e4eb06
-	    [unique_hash] => 8ce9020800900a341dd193ec046544ec8b8a4e41
+	    [guid] => ecf66465-9a97-d134-79ad-f2a139437a95
+	    [unique_hash] => 35e4ac33b1a89fde70f7ef0254e835282a531a88
 	    [name] => stdClass Object
 	        (
-	            [first] => Franklin
-	            [middle] => Jeffrey
-	            [last] => Hayes
+	            [first] => Edgar
+	            [middle] => Charles
+	            [last] => Fowler
 	            [gender] => M
 	        )
 	
-	    [company] => Crawford Plumbing
+	    [company] => Fowler Realty
 	    [address] => stdClass Object
 	        (
-	            [line_1] => 1294 Edgewood Drive
-	            [line_2] => 
-	            [city] => Hardy
-	            [zip] => 72542
-	            [county] => Sharp
+	            [line_1] => 3217 Madison Court
+	            [line_2] => Apartment W
+	            [city] => Poteau
+	            [zip] => 74953
+	            [county] => Le Flore
 	            [state] => stdClass Object
 	                (
-	                    [code] => AR
-	                    [name] => Arkansas
+	                    [code] => OK
+	                    [name] => Oklahoma
 	                )
 	
 	        )
 	
 	    [address2] => stdClass Object
 	        (
-	            [line_1] => 7286 4th Street
-	            [line_2] => 
-	            [city] => Hardy
-	            [zip] => 72542
-	            [county] => Sharp
+	            [line_1] => 9552 12th Street
+	            [line_2] => Apt. 3693
+	            [city] => Poteau
+	            [zip] => 74953
+	            [county] => Le Flore
 	            [state] => stdClass Object
 	                (
-	                    [code] => AR
-	                    [name] => Arkansas
+	                    [code] => OK
+	                    [name] => Oklahoma
 	                )
 	
 	        )
 	
 	    [internet] => stdClass Object
 	        (
-	            [domain] => crawfordplumbing.com
-	            [email] => franklinhayes@yahoo.com
-	            [url] => http://crawfordplumbing.com
-	            [ip] => 102.121.87.79
+	            [domain] => fowlerrealty.net
+	            [email] => edgar.fowler@fowlerrealty.net
+	            [url] => https://www.fowlerrealty.net
+	            [ip] => 0.144.51.92
 	        )
 	
 	    [phone] => stdClass Object
 	        (
-	            [home] => 870-925-5123
-	            [mobile] => 870-125-5868
-	            [work] => 870-374-9335
+	            [home] => 918-758-7706
+	            [mobile] => 918-837-4856
+	            [work] => 918-885-2146
 	        )
 	
-	    [ssn] => 432281735
+	    [ssn] => 431835640
 	    [dln] => stdClass Object
 	        (
-	            [number] => 943142245
+	            [number] => 963852749
 	            [state] => stdClass Object
 	                (
-	                    [code] => AR
-	                    [name] => Arkansas
+	                    [code] => OK
+	                    [name] => Oklahoma
 	                )
 	
-	            [expiration] => 09/2013
+	            [expiration] => 08/2013
 	        )
 	
-	    [dob] => 1941-02-16
+	    [dob] => 1963-08-25
 	    [credit_card] => stdClass Object
 	        (
-	            [type] => MasterCard
-	            [number] => 4636465029552659
-	            [expiration] => 05/2016
+	            [type] => Visa
+	            [number] => 4024007171997611
+	            [expiration] => 08/2016
 	        )
 	
 	    [bank_account] => stdClass Object
 	        (
 	            [type] => Checking
-	            [name] => Arvest
-	            [account] => 847986716
-	            [routing] => 041249772
+	            [name] => Wells Fargo
+	            [account] => 192757996
+	            [routing] => 117062752
 	        )
 	
 	)
 
 Each type of data element above may be generated independently.  Examples:
 
-	get_firstname($gender = NULL)
-	get_lastname()
-	get_full_name($gender = NULL)
-	get_street()
-	get_apartment()
-	get_state()
-	get_zip($state_code = FALSE)
-	get_city($state_code = FALSE)
-	get_address($state_code = FALSE)
+	getFirstName($gender = NULL)
+	getLastName()
+	getFullName($gender = NULL)
+	getStreet()
+	getApartment()
+	getState()
+	getZip($state_code = FALSE)
+	getCity($state_code = FALSE)
+	getAddress($state_code = FALSE)
 	
-Plus many more. See libraries/Mock_data.php for all available options.
+Plus many more. See src/joshmoody/Mock/Generator.php for all available options.
 	
 ## Data Realism
 This library is designed to create very realistic-looking data.
@@ -136,7 +139,7 @@ This library is designed to create very realistic-looking data.
 
 ## Requirements
 - MySQL
-- PHP 5 with MySQL PDO extension.
+- PHP >= 5.3.3 with MySQL PDO extension.
 
 ## Installation
 Run the SQL statements from data/create\_tables.sql and data/load\_tables.sql to generate all the base data.
@@ -145,26 +148,12 @@ Run the SQL statements from data/create\_tables.sql and data/load\_tables.sql to
 	
 	mysql -u root -p -h localhost < data/load_tables.sql
 	
-This library may be loaded as a CodeIgniter libray by copying config/mock.php to your application/config directory and libraries/Mock_data.php to your application/libraries directory.
-Then load the library with:
 
-	$this->load->config('mock', TRUE);
-	$mock_config = $this->config->item('mock');
-	$this->load->library('mock_data', $mock_config);
-	$person = $this->mock_data->get_person('AR'); // Load a person from Arkansas.
-	
-	print_r($person);
-	
-This library uses straight PDO for database access and does not rely on the database abstraction of any particular framework. If using in another framework or as a stand-a-lone library:
+This library is distributed as a composer package.	
+	composer require --dev joshmoody/mock-data-generator dev-master
 
-	require_once 'config/mock.php';
-	require_once 'libraries/Mock_data.php';
-	
-	$mock = new Mock_data($config);
-	$person = $mock->get_person('AR');
-	
-	print_r($person);
-
+https://packagist.org/packages/joshmoody/mock-data-generator
+ 
 ## Reloading Data
 You can regenerate the database from the source data files.
 You should only need to do this if modifying the source data to refresh the database.  Otherwise, just use the installation steps outlined above.
@@ -188,11 +177,6 @@ The geographic and demographic source data used in this library was derived from
 - https://www.census.gov/genealogy/www/data/1990surnames/names_files.html
 - http://www.livingplaces.com/streets/most-popular_street_names.html
 
-
-## Installation via Composer
-    composer require --dev joshmoody/mock-data-generator dev-master
-    
-https://packagist.org/packages/joshmoody/mock-data-generator
 
 ## License and copyright
 Licensed under the BSD (Berkeley Software Distribution) License.
