@@ -10,19 +10,34 @@ class Generator{
 
 	protected $db;
 	
-	function __construct($opts = array())
+	function __construct($opts = array('sqlite' => TRUE))
 	{
 		$hostname = NULL;
 		$username = NULL;
 		$password = NULL;
 		$database = NULL;
 		$dbdriver = NULL;
+		$sqlite   = FALSE;
 		
 		extract($opts, EXTR_IF_EXISTS);
 
 		// Build PDO DSN.
-		$dsn = sprintf('%s:host=%s;dbname=%s', $dbdriver, $hostname, $database);
-
+		if ($sqlite === TRUE)
+		{
+			$db_path = __DIR__ . '/database.sqlite';
+			$temp_path = '/tmp/database.sqlite';
+			copy($db_path, $temp_path);
+			$dsn = sprintf('sqlite:%s', $temp_path);
+		}
+		else if ($dbdriver == 'sqlite')
+		{
+			$dsn = sprintf('sqlite:%s', $database);
+		}
+		else
+		{
+			$dsn = sprintf('%s:host=%s;dbname=%s', $dbdriver, $hostname, $database);
+		}
+		
 		try
 		{
 			$this->db = new PDO($dsn, $username, $password);
@@ -819,6 +834,13 @@ class Generator{
 	 * Using PDO for database access to decrease framework dependence. 
 	 */
 	protected function query($sql, $params = array()){
+
+		$db_type = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+		
+		if ($db_type == 'sqlite')
+		{
+			$sql = str_ireplace('rand()', 'random()', $sql);
+		}
 
 		try
 		{

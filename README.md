@@ -14,8 +14,8 @@ With a simple loop, I can generate a database representing 100,000 people to use
 ## Mock Data Generation
 Many different types of mock data can be generated with this library.  From basic building blocks like numbers and dates to a Person with just about every attribute you need from a Date of Birth to Driver's License and Credit Card.
 
-	$opts = array('hostname' => 'localhost', 'username' => 'root', 'password' => 'root', 'database' => 'mock_data', 'db_driver' => 'mysql');
-	$generator = new joshmoody\Mock\Generator($opts);
+	<?php
+	$generator = new joshmoody\Mock\Generator();
 	
 	$person = $generator->getPerson();
 	print_r($person);
@@ -138,19 +138,37 @@ This library is designed to create very realistic-looking data.
 		- The prefix and length will match the type of card generated (MasterCard, Visa, etc.)
 
 ## Requirements
-- MySQL
-- PHP >= 5.3.3 with MySQL PDO extension.
+- MySQL or SQlite
+- PHP >= 5.3.3 with MySQL _or_ SQlite PDO extension.
 
-## Installation
+## Installation - SQLite
+Extract data/database.sqlite to src/joshmoody/Mock/
+	
+	$ unzip -j data/database.sqlite.zip -d src/joshmoody/Mock/
+
+Call the constructor without passing an options array.
+	
+	<?php
+	$generator = new joshmoody\Mock\Generator();
+	
+## Installation - MySQL
 Run the SQL statements from data/create\_tables.sql and data/load\_tables.sql to generate all the base data.
 
-	mysql -u root -p -h localhost < data/create_tables.sql
+	$ mysql -u root -p -h localhost < data/create_tables.sql
 	
-	mysql -u root -p -h localhost < data/load_tables.sql
-	
+	$ mysql -u root -p -h localhost < data/load_tables.sql
+
+Pass your database info to the constructor:
+
+	<?php
+	$opts = array('hostname' => 'localhost', 'username' => 'root', 'password' => 'root', 'database' => 'mock_data', 'db_driver' => 'mysql');
+	$generator = new joshmoody\Mock\Generator($opts);
+
+
 
 This library is distributed as a composer package.	
-	composer require --dev joshmoody/mock-data-generator dev-master
+	
+	$ composer require --dev joshmoody/mock-data-generator dev-master
 
 https://packagist.org/packages/joshmoody/mock-data-generator
  
@@ -161,13 +179,16 @@ All commands should be executed from the data directory.
 
 Parse all the source data files and construct SQL to insert into the database.
 
-	php generate_sql.php > /tmp/mock_data.sql
+	$ php generate_sql.php > /tmp/mock_data.sql
 
 Alter this statement as needed to match your username and database name
 
-	mysql -u root -p -h localhost mock_data < /tmp/mock_data.sql
+	$ mysql -u root -p -h localhost mock_data < /tmp/mock_data.sql
 
+## If you need to update the sqlite database:
 
+	$ zip -r -X data/database.sqlite.zip data/database.sqlite
+	
 ## Acknowledgements
 
 The geographic and demographic source data used in this library was derived from several places, including:
