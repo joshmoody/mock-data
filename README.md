@@ -141,8 +141,18 @@ This library is designed to create very realistic-looking data.
 - MySQL or SQlite
 - PHP >= 5.3.3 with MySQL _or_ SQlite PDO extension.
 
-## Installation - SQLite
-Extract data/database.sqlite to src/joshmoody/Mock/
+## Installation
+
+This library is distributed as a composer package.	
+	
+	$ composer require --dev joshmoody/mock-data-generator dev-master
+
+https://packagist.org/packages/joshmoody/mock-data-generator
+
+**You can use either SQLite or MySQL for storing the base mock data elements.**
+
+## Setup - SQLite
+Extract data/database.sqlite.zip to src/joshmoody/Mock/
 	
 	$ unzip -j data/database.sqlite.zip -d src/joshmoody/Mock/
 
@@ -150,8 +160,8 @@ Call the constructor without passing an options array.
 	
 	<?php
 	$generator = new joshmoody\Mock\Generator();
-	
-## Installation - MySQL
+
+## Setup - MySQL
 Run the SQL statements from data/create\_tables.sql and data/load\_tables.sql to generate all the base data.
 
 	$ mysql -u root -p -h localhost < data/create_tables.sql
@@ -164,13 +174,6 @@ Pass your database info to the constructor:
 	$opts = array('hostname' => 'localhost', 'username' => 'root', 'password' => 'root', 'database' => 'mock_data', 'db_driver' => 'mysql');
 	$generator = new joshmoody\Mock\Generator($opts);
 
-
-
-This library is distributed as a composer package.	
-	
-	$ composer require --dev joshmoody/mock-data-generator dev-master
-
-https://packagist.org/packages/joshmoody/mock-data-generator
  
 ## Reloading Data
 You can regenerate the database from the source data files.
