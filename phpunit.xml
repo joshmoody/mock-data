@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit bootstrap="./phpunit.php">
 
 	<testsuites>
         <testsuite name="Mock Data Generator Test Suite">
-            <directory suffix="Tests.php">./tests/joshmoody/Mock</directory>
+            <directory suffix="Tests.php">./tests</directory>
         </testsuite>
     </testsuites>
 	

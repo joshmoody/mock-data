@@ -24,10 +24,9 @@ class Generator{
 		// Build PDO DSN.
 		if ($sqlite === TRUE)
 		{
-			$db_path = __DIR__ . '/database.sqlite';
-			$temp_path = '/tmp/database.sqlite';
-			copy($db_path, $temp_path);
-			$dsn = sprintf('sqlite:%s', $temp_path);
+			$db_path = dirname(__DIR__) . '/data/database.sqlite';
+			
+			$dsn = sprintf('sqlite:%s', $db_path);
 		}
 		else if ($dbdriver == 'sqlite')
 		{

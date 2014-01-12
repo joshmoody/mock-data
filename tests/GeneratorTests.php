@@ -28,8 +28,6 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	{
 		$person = $this->generator->getPerson();
 		
-		print_r($person);
-		
 		$this->assertObjectHasAttribute('guid', $person);
 	}
 	
