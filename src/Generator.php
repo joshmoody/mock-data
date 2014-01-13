@@ -6,44 +6,37 @@ use PDO;
 use Exception;
 use StdClass;
 
-class Generator{
+class Generator
+{
 
 	protected $db;
 	
-	function __construct($opts = array('sqlite' => TRUE))
+	public function __construct($opts = array('sqlite' => true))
 	{
-		$hostname = NULL;
-		$username = NULL;
-		$password = NULL;
-		$database = NULL;
-		$dbdriver = NULL;
-		$sqlite   = FALSE;
+		$hostname = null;
+		$username = null;
+		$password = null;
+		$database = null;
+		$dbdriver = null;
+		$sqlite	  = false;
 		
 		extract($opts, EXTR_IF_EXISTS);
 
 		// Build PDO DSN.
-		if ($sqlite === TRUE)
-		{
+		if ($sqlite === true) {
 			$db_path = dirname(__DIR__) . '/data/database.sqlite';
 			
 			$dsn = sprintf('sqlite:%s', $db_path);
-		}
-		else if ($dbdriver == 'sqlite')
-		{
+		} elseif ($dbdriver == 'sqlite') {
 			$dsn = sprintf('sqlite:%s', $database);
-		}
-		else
-		{
+		} else {
 			$dsn = sprintf('%s:host=%s;dbname=%s', $dbdriver, $hostname, $database);
 		}
 		
-		try
-		{
+		try {
 			$this->db = new PDO($dsn, $username, $password);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			throw $e;
 		}
 	}
@@ -51,7 +44,7 @@ class Generator{
 	/**
 	 * Generate a float number between $min and $max, with precision $precision
 	 */
-	public function getFloat($min=0, $max=10000, $precision=2)
+	public function getFloat($min = 0, $max = 10000, $precision = 2)
 	{
 		$num = rand($min, $max) . '.' . str_pad(rand(1, 99), 2, '0', STR_PAD_LEFT);
 		return round($num, $precision);
@@ -60,7 +53,7 @@ class Generator{
 	/**
 	 * Generate a random number between $min and $max
 	 */
-	public function getInteger($min=0, $max=10000)
+	public function getInteger($min = 0, $max = 10000)
 	{
 		return rand($min, $max);
 	}
@@ -70,38 +63,31 @@ class Generator{
 	 */
 	public function getUniqueHash()
 	{
-		return sha1(uniqid(uniqid(), TRUE));
+		return sha1(uniqid(uniqid(), true));
 	}
 	
 	/**
-	 *  Generate random string.
+	 *	Generate random string.
 	 * 
 	 * @access public
-	 * @param string $type Options: letter, number, or mix.  default: letter
+	 * @param string $type Options: letter, number, or mix.	 default: letter
 	 * @param mixed $desired_length Will be random length if not specified.
 	 * @return string
 	 */
-	public function getString($type = 'letter', $desired_length = FALSE)
+	public function getString($type = 'letter', $desired_length = false)
 	{
-		if (!$desired_length)
-		{
+		if (!$desired_length) {
 			$desired_length = $this->getInteger(1, 50);
 		}
 		
 		$result = '';
 		
-		while (strlen($result) < $desired_length)
-		{
-			if ($type == 'letter')
-			{
+		while (strlen($result) < $desired_length) {
+			if ($type == 'letter') {
 				$result .= $this->getLetter();
-			}
-			else if ($type == 'number')
-			{
+			} elseif ($type == 'number') {
 				$result .= $this->getInteger(1, 10);
-			}
-			else
-			{
+			} else {
 				// Mix letters/numbers.
 				$result .= $this->getUniqueHash();
 			}
@@ -115,15 +101,19 @@ class Generator{
 	 */
 	public function getGuid()
 	{
-		return sprintf('%04x%04x-%04x-%03x4-%04x-%04x%04x%04x',
-			mt_rand(0, 65535), mt_rand(0, 65535), // 32 bits for "time_low"
-			mt_rand(0, 65535), // 16 bits for "time_mid"
-			mt_rand(0, 4095),  // 12 bits before the 0100 of (version) 4 for "time_hi_and_version"
-			bindec(substr_replace(sprintf('%016b', mt_rand(0, 65535)), '01', 6, 2)),
-				// 8 bits, the last two of which (positions 6 and 7) are 01, for "clk_seq_hi_res"
-				// (hence, the 2nd hex digit after the 3rd hyphen can only be 1, 5, 9 or d)
-				// 8 bits for "clk_seq_low"
-			mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535) // 48 bits for "node"
+		return sprintf(
+						'%04x%04x-%04x-%03x4-%04x-%04x%04x%04x',
+						mt_rand(0, 65535),
+						mt_rand(0, 65535),	// 32 bits for "time_low"
+						mt_rand(0, 65535),	// 16 bits for "time_mid"
+						mt_rand(0, 4095),	// 12 bits before the 0100 of (version) 4 for "time_hi_and_version"
+						bindec(substr_replace(sprintf('%016b', mt_rand(0, 65535)), '01', 6, 2)),
+						// 8 bits, the last two of which (positions 6 and 7) are 01, for "clk_seq_hi_res"
+						// (hence, the 2nd hex digit after the 3rd hyphen can only be 1, 5, 9 or d)
+						// 8 bits for "clk_seq_low"
+						mt_rand(0, 65535),
+						mt_rand(0, 65535),
+						mt_rand(0, 65535) // 48 bits for "node"
 		);
 	}
 	
@@ -133,35 +123,29 @@ class Generator{
 	 */
 	public function fromArray($array = array())
 	{
-		if (count($array) > 0)
-		{
+		if (count($array) > 0) {
 			return $array[rand(0, count($array)-1)];
-		}
-		else
-		{
-			return FALSE;			
+		} else {
+			return false;
 		}
 	}
 	
 	/**
-	 * Generate a boolean. Use the parameters to custom the ressponse to be TRUE/FALSE, 1/0, Yes/No, etc.
+	 * Generate a boolean. Use the parameters to custom the ressponse to be true/false, 1/0, Yes/No, etc.
 	 * 
 	 * @access public
-	 * @param mixed $true Value that should be returned if TRUE (default: TRUE)
-	 * @param mixed $false Value that should be returned if FALSE (default: FALSE)
-	 * @param mixed $likely How likely is it (1-10) the result will be TRUE?  1 = Always, 10 = Almost never.
+	 * @param mixed $true Value that should be returned if true (default: true)
+	 * @param mixed $false Value that should be returned if false (default: false)
+	 * @param mixed $likely How likely is it (1-10) the result will be true?  1 = Always, 10 = Almost never.
 	 * @return mixed the result.
 	 */
-	public function getBool($true = TRUE, $false = FALSE, $likely = 2)
-	{	
-		$i = $this->getInteger(1,100);
+	public function getBool($true = true, $false = false, $likely = 2)
+	{
+		$i = $this->getInteger(1, 100);
 		
-		if ($i % $likely == 0)
-		{
+		if ($i % $likely == 0) {
 			return $true;
-		}
-		else
-		{
+		} else {
 			return $false;
 		}
 	}
@@ -172,30 +156,25 @@ class Generator{
 	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
 	 * @param string $format date() format for return value.  Default: Y-m-d
 	 */
-	public function getDate($params=array(), $format = 'Y-m-d')
+	public function getDate($params = array(), $format = 'Y-m-d')
 	{
-		foreach($params as $k=>$v)
-		{
+		foreach ($params as $k => $v) {
 			$$k = $v;
 		}
 
-		if (!isset($min_year))
-		{
+		if (!isset($min_year)) {
 			$min_year = date('Y') - 2;
 		}
 		
-		if (!isset($max_year))
-		{
+		if (!isset($max_year)) {
 			$max_year = date('Y');
 		}
 
-		if (!isset($min_month))
-		{
+		if (!isset($min_month)) {
 			$min_month = 1;
 		}
 		
-		if (!isset($max_month))
-		{
+		if (!isset($max_month)) {
 			$max_month = 12;
 		}
 		
@@ -208,9 +187,9 @@ class Generator{
 	}
 	
 	/**
-	 * Generate a reasonable birthdate.  Default Range: 1930-1990
+	 * Generate a reasonable birthdate.	 Default Range: 1930-1990
 	 */
-	public function getBirthDate($params=array(), $format = 'Y-m-d')
+	public function getBirthDate($params = array(), $format = 'Y-m-d')
 	{
 		$params['min_year'] = array_key_exists('min_year', $params) ? $params['min_year'] : 1930;
 		$params['max_year'] = array_key_exists('max_year', $params) ? $params['max_year'] : 1980;
@@ -220,19 +199,19 @@ class Generator{
 	public function getExpiration($format = 'm/Y')
 	{
 		$date_params = array('min_year' => date('Y'),
-							 'max_year' => date('Y') + 3);
+							'max_year' => date('Y') + 3);
 		return $this->getDate($date_params, $format);
 	}
 	
 	/**
 	 * Returns a DLN object that contains a driver license number, state, and expiration
 	 */
-	public function getDln($state_code = FALSE, $min=900000001, $max=999999999)
+	public function getDln($state_code = false, $min = 900000001, $max = 999999999)
 	{
 		$dln = new stdclass();
 
-		$dln->number 		= rand($min, $max);
-		$dln->state 		= $state_code ? $this->getState($state_code) : $this->getState();		
+		$dln->number		= rand($min, $max);
+		$dln->state			= $state_code ? $this->getState($state_code) : $this->getState();
 		$dln->expiration	= $this->getExpiration();
 		
 		return $dln;
@@ -240,9 +219,11 @@ class Generator{
 
 	/**
 	 * Generate a 9 digit number that could be an SSN.
-	 * The default min and max denote numbers assigned in Arkansas. See http://socialsecuritynumerology.com/prefixes.php for other States' ranges.
+	 * The default min and max denote numbers assigned in Arkansas
+	 * See http://socialsecuritynumerology.com/prefixes.php for
+	 * other States' ranges.
 	 */
-	public function getSsn($min=429000001, $max=432999999)
+	public function getSsn($min = 429000001, $max = 432999999)
 	{
 		return rand($min, $max);
 	}
@@ -252,12 +233,11 @@ class Generator{
 	 *
 	 * Uses US Census data to get 250 most popular names for both male and female
 	 *
-	 * @param string $gender Do you want a male or female name? (M/F).  If null, selects a gender at random.
+	 * @param string $gender Do you want a male or female name? (M/F).	If null, selects a gender at random.
 	 */
-	public function getFirstName($gender=NULL)
+	public function getFirstName($gender = null)
 	{
-		if ($gender == FALSE || $gender == NULL)
-		{
+		if (empty($gender)) {
 			$gender = $this->getGender();
 		}
 
@@ -269,12 +249,9 @@ class Generator{
 	 */
 	public function getGender()
 	{
-		if (rand(1,100) % 2 == 0)
-		{
+		if (rand(1, 100) % 2 == 0) {
 			return 'F';
-		}
-		else
-		{
+		} else {
 			return 'M';
 		}
 	}
@@ -296,7 +273,7 @@ class Generator{
 	/**
 	 * Alias for get_firstname()
 	 */
-	public function getMiddleName($gender=NULL)
+	public function getMiddleName($gender = null)
 	{
 		return $this->getFirstName($gender);
 	}
@@ -314,12 +291,11 @@ class Generator{
 	 * Returns a Full Name
 	 *
 	 * @param string $gender.  Will be used to make sure both First and Middle Name are for same gender.
-	 * @return object Object with first, middle, last name and gender.  Gender included to avoid "A Boy Named Sue".
+	 * @return object Object with first, middle, last name and gender.	Gender included to avoid "A Boy Named Sue".
 	 */
-	public function getFullName($gender = FALSE)
+	public function getFullName($gender = null)
 	{
-		if (!$gender)
-		{
+		if (empty($gender)) {
 			$gender = $this->getGender();
 		}
 		
@@ -344,17 +320,14 @@ class Generator{
 		return $number . ' ' . $street_name;
 	}
 	
-	function getApartment()
+	public function getApartment()
 	{
 		$types = array('Apt.', 'Apartment', 'Ste.', 'Suite', 'Box');
 		
-		if ($this->getBool(TRUE,FALSE))
-		{
+		if ($this->getBool(true, false)) {
 			$extra = $this->getLetter();
-		}
-		else
-		{
-			$extra = $this->getInteger(1,9999);
+		} else {
+			$extra = $this->getInteger(1, 9999);
 		}
 		
 		$type = $this->fromArray($types);
@@ -366,14 +339,12 @@ class Generator{
 	 *
 	 * @return array(code, description)
 	 */
-	public function getState($state_code = FALSE){
+	public function getState($state_code = false)
+	{
 		
-		if ($state_code)
-		{
+		if ($state_code) {
 			$res = $this->query('SELECT state_code, state FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch();
-		}
-		else
-		{
+		} else {
 			$res = $this->query('SELECT state_code, state FROM zipcodes ORDER BY RAND() LIMIT 1')->fetch();
 		}
 		
@@ -386,26 +357,21 @@ class Generator{
 	/**
 	 * Return a zip code
 	 */
-	public function getZip($state_code = FALSE){
+	public function getZip($state_code = false)
+	{
 	
-		if ($state_code)
-		{
+		if ($state_code) {
 			return $this->query('SELECT zip FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch()->zip;
-		}
-		else
-		{
+		} else {
 			return $this->query('SELECT zip from zipcodes ORDER BY RAND() LIMIT 1')->fetch()->zip;
 		}
 	}
 
-	public function getCity($state_code = FALSE)
+	public function getCity($state_code = false)
 	{
-		if ($state_code)
-		{
+		if ($state_code) {
 			return $this->query('SELECT city FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch()->city;
-		}
-		else
-		{
+		} else {
 			return $this->query('SELECT city from zipcodes ORDER BY RAND() LIMIT 1')->fetch()->city;
 		}
 	}
@@ -413,22 +379,16 @@ class Generator{
 	/**
 	 * Return object with full street info
 	 */
-	public function getAddress($state_code = FALSE, $zip = FALSE)
+	public function getAddress($state_code = false, $zip = false)
 	{
 		$address = new stdclass();
 
-		if ($zip)
-		{
-			$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes WHERE zip = :zip ORDER BY RAND() LIMIT 1', array(':zip' => $zip))->fetch();			
-		}
-		else
-		{
-			if ($state_code)
-			{
+		if ($zip) {
+			$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes WHERE zip = :zip ORDER BY RAND() LIMIT 1', array(':zip' => $zip))->fetch();
+		} else {
+			if ($state_code) {
 				$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch();
-			}
-			else
-			{
+			} else {
 				$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes ORDER BY RAND() LIMIT 1')->fetch();
 			}
 		}
@@ -436,18 +396,15 @@ class Generator{
 
 		$address->line_1 = $this->getStreet();
 		
-		if ($this->getBool(TRUE, FALSE))
-		{
-			$address->line_2 = $this->getApartment();	
-		}
-		else
-		{
-			$address->line_2 = NULL;
+		if ($this->getBool(true, false)) {
+			$address->line_2 = $this->getApartment();
+		} else {
+			$address->line_2 = null;
 		}
 		
 		$address->city		= $result->city;
 		$address->zip		= $result->zip;
-		$address->county 	= $result->county;
+		$address->county	= $result->county;
 		
 		$address->state = new stdclass();
 		$address->state->code = $result->state_code;
@@ -460,12 +417,11 @@ class Generator{
 	 * Return a Company Name.  Uses a random last name plus a suffix that looks like a company name.
 	 * You can optionally pass a name to serve as the prefix
 	 */
-	public function getCompanyName($base_name = NULL)
+	public function getCompanyName($base_name = null)
 	{
 		$suffixes = array('Corporation', 'Company', 'Company, Limited', 'Computer Repair', 'Incorporated', 'and Sons', 'Group', 'Group, PLC', 'Furniture', 'Flowers', 'Sales', 'Systems', 'Tire', 'Auto', 'Plumbing', 'Roofing', 'Realty', 'Foods', 'Books');
 		
-		if (!$base_name)
-		{
+		if (!$base_name) {
 			$base_name = $this->getLastName();
 		}
 
@@ -475,15 +431,12 @@ class Generator{
 	/**
 	 * Return a phone number
 	 */
-	public function getPhone($state_code = FALSE, $zip_code = FALSE, $include_toll_free = FALSE)
+	public function getPhone($state_code = false, $zip_code = false, $include_toll_free = false)
 	{
 
-		if ($zip_code)
-		{
+		if ($zip_code) {
 			$areacodes = $this->query('SELECT area_codes FROM zipcodes WHERE zip = :zip ORDER BY RAND() LIMIT 1', array(':zip' => $zip_code))->fetch()->area_codes;
-		}
-		else
-		{
+		} else {
 			// Get a random state if state not provided
 			$state_code = $state_code ? $state_code : $this->getState()->code;
 			
@@ -495,8 +448,7 @@ class Generator{
 		$code_list = explode(',', $areacodes);
 		
 		// Add some toll free numbers into the mix.
-		if ($include_toll_free === TRUE)
-		{
+		if ($include_toll_free === true) {
 			$code_list[] = 800;
 			$code_list[] = 888;
 			$code_list[] = 877;
@@ -512,7 +464,7 @@ class Generator{
 		return $areacode . '-' . $prefix . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
 	}
 	
-	public function getDomain($base = FALSE)
+	public function getDomain($base = false)
 	{
 		$domain = $base ? $base : $this->getLastName();
 		
@@ -522,21 +474,20 @@ class Generator{
 		return strtolower($domain) . $this->fromArray($tld);
 	}
 	
-	public function getUrl($domain = FALSE)
+	public function getUrl($domain = false)
 	{
 		$protocol = array('https://www.', 'http://www.', 'http://', 'https://');
 		
 		$domain = $domain ? $domain : $this->get_domain();
 		
-		return $this->fromArray($protocol)  . $domain;
+		return $this->fromArray($protocol)	. $domain;
 	}
 	
 	public function getIp()
 	{
 		$parts = array();
 		
-		for ($i=0; $i<4; $i++)
-		{
+		for ($i=0; $i<4; $i++) {
 			$parts[] = $this->getInteger(0, 255);
 		}
 		
@@ -547,10 +498,9 @@ class Generator{
 	 * Return an email address.
 	 * You can optionally pass a name to use in the address
 	 */
-	 public function getEmail($person_name = FALSE, $domain = FALSE)
-	 {
-		if ($person_name == FALSE)
-		{
+	public function getEmail($person_name = false, $domain = false)
+	{
+		if ($person_name == false) {
 			$person_name = $this->getFullName();
 		}
 		
@@ -578,32 +528,28 @@ class Generator{
 	 * Generate a credit card number.
 	 * 
 	 * @access public
-	 * @param mixed $weighted (default: TRUE) - Make it more likely to return MasterCard or Visa
+	 * @param mixed $weighted (default: true) - Make it more likely to return MasterCard or Visa
 	 * @return CreditCard Object.  
 	 */
-	function getCreditCard($weighted = TRUE)
+	public function getCreditCard($weighted = true)
 	{
 		// Get a random card type
 
-		if ($weighted){
+		if ($weighted) {
 			$weight[] = array('American Express', 1);
 			$weight[] = array('Discover'		, 2);
 			$weight[] = array('MasterCard'		, 10);
 			$weight[] = array('Visa'			, 10);
 			
-			foreach($weight as $w)
-			{
+			foreach ($weight as $w) {
 				$type = $w[0];
 				$count = $w[1];
 			
-				for($i=0; $i<$count; $i++)
-				{
+				for ($i=0; $i<$count; $i++) {
 					$card_types[] = $type;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$card_types = array('American Express', 'Discover', 'MasterCard', 'Visa');
 		}
 
@@ -648,17 +594,17 @@ class Generator{
 	 * Generate internet information.  Domain, Email, URL, IP Address
 	 * 
 	 * @access public
-	 * @param mixed $person_name (default: FALSE)
-	 * @param mixed $company (default: FALSE)
+	 * @param mixed $person_name (default: false)
+	 * @param mixed $company (default: false)
 	 * @return Internet object
 	 */
-	public function getInternet($person_name = FALSE, $company = FALSE)
+	public function getInternet($person_name = false, $company = false)
 	{
 		$internet = new stdclass();
 		$internet->domain	= $this->getDomain($company);
 		$internet->email	= $this->getEmail($person_name, $internet->domain);
-		$internet->url		= $this->getUrl($internet->domain);	
-		$internet->ip		= $this->getIp();	
+		$internet->url		= $this->getUrl($internet->domain);
+		$internet->ip		= $this->getIp();
 		
 		return $internet;
 	}
@@ -668,10 +614,10 @@ class Generator{
 	 * Generate a Person object with all relevent attributes.
 	 * 
 	 * @access public
-	 * @param mixed $state_code (default: FALSE)
+	 * @param mixed $state_code (default: false)
 	 * @return void
 	 */
-	public function getPerson($state_code = FALSE)
+	public function getPerson($state_code = false)
 	{
 		$state_code = $state_code ? $state_code : $this->getState()->code;
 		
@@ -682,13 +628,10 @@ class Generator{
 		
 		$person->name = $this->getFullName(); // Returns an object with first, middle, last, and gender properties
 		
-		if (rand(1,100) % 5 == 0)
-		{
+		if (rand(1, 100) % 5 == 0) {
 			// Self employed?  Name the business after them.
 			$person->company = $this->getCompanyName($person->name->last);
-		}
-		else
-		{
+		} else {
 			// Generate some random company name.
 			$person->company = $this->getCompanyName();
 		}
@@ -696,7 +639,7 @@ class Generator{
 		# Primary address
 		$person->address = $this->getAddress($state_code); // Returns object with line_1, line_2, city, zip, county, state->code, and state->name properties.
 		
-		# Secondary Address.  Mailing Address?  Use same zip code and primary address
+		# Secondary Address.  Mailing Address?	Use same zip code and primary address
 		$person->address2 = $this->getAddress($state_code, $person->address->zip);
 		
 		$person->internet = $this->getInternet($person->name, $person->company);
@@ -724,57 +667,64 @@ class Generator{
 	 *
 	 * Numbers created here will pass the Luhn Mod-10 test.
 	 */
-	 public function getBankNumber($type = 'Visa')
-	 {
-		 $visaPrefixList[] =  "4539";
-		 $visaPrefixList[] =  "4556";
-		 $visaPrefixList[] =  "4916";
-		 $visaPrefixList[] =  "4532";
-		 $visaPrefixList[] =  "4929";
-		 $visaPrefixList[] =  "40240071";
-		 $visaPrefixList[] =  "4485";
-		 $visaPrefixList[] =  "4716";
-		 $visaPrefixList[] =  "4";
+	public function getBankNumber($type = 'Visa')
+	{
+		$visaPrefixList[] = '4539';
+		$visaPrefixList[] = '4556';
+		$visaPrefixList[] = '4916';
+		$visaPrefixList[] = '4532';
+		$visaPrefixList[] = '4929';
+		$visaPrefixList[] = '40240071';
+		$visaPrefixList[] = '4485';
+		$visaPrefixList[] = '4716';
+		$visaPrefixList[] = '4';
 		
-		 $mastercardPrefixList[] =  "51";
-		 $mastercardPrefixList[] =  "52";
-		 $mastercardPrefixList[] =  "53";
-		 $mastercardPrefixList[] =  "54";
-		 $mastercardPrefixList[] =  "55";
+		$mastercardPrefixList[] = '51';
+		$mastercardPrefixList[] = '52';
+		$mastercardPrefixList[] = '53';
+		$mastercardPrefixList[] = '54';
+		$mastercardPrefixList[] = '55';
 		
-		 $amexPrefixList[] =  "34";
-		 $amexPrefixList[] =  "37";
+		$amexPrefixList[] = '34';
+		$amexPrefixList[] = '37';
 		
-		 $discoverPrefixList[] = "6011";
+		$discoverPrefixList[] = '6011';
 		
-		 $routingPrefixList[] = "01";
-		 $routingPrefixList[] = "02";
-		 $routingPrefixList[] = "03";
-		 $routingPrefixList[] = "04";
-		 $routingPrefixList[] = "05";
-		 $routingPrefixList[] = "06";
-		 $routingPrefixList[] = "07";
-		 $routingPrefixList[] = "08";
-		 $routingPrefixList[] = "09";
-		 $routingPrefixList[] = "10";
-		 $routingPrefixList[] = "11";
-		 $routingPrefixList[] = "12";
+		$routingPrefixList[] = '01';
+		$routingPrefixList[] = '02';
+		$routingPrefixList[] = '03';
+		$routingPrefixList[] = '04';
+		$routingPrefixList[] = '05';
+		$routingPrefixList[] = '06';
+		$routingPrefixList[] = '07';
+		$routingPrefixList[] = '08';
+		$routingPrefixList[] = '09';
+		$routingPrefixList[] = '10';
+		$routingPrefixList[] = '11';
+		$routingPrefixList[] = '12';
 		
-		 switch($type)
-		 {
-			 case 'Visa':
-			 	return $this->completedBankNumber($visaPrefixList, 16);
-			 case 'Master Card':
-			 	return $this->completedBankNumber($mastercardPrefixList, 16);
-			 case 'American Express':
-			 	return $this->completedBankNumber($amexPrefixList, 15);
-			 case 'Discover':
-			 	return $this->completedBankNumber($discoverPrefixList, 16);
-			 case 'Routing':
-			 	return $this->completedBankNumber($routingPrefixList, 9);
-			 default:
-			 	return $this->completedBankNumber($visaPrefixList, 16);
+		switch ($type) {
+			case 'Visa':
+				$bank_number = $this->completedBankNumber($visaPrefixList, 16);
+				break;
+			case 'Master Card':
+				$bank_number = $this->completedBankNumber($mastercardPrefixList, 16);
+				break;
+			case 'American Express':
+				$bank_number = $this->completedBankNumber($amexPrefixList, 15);
+				break;
+			case 'Discover':
+				$bank_number = $this->completedBankNumber($discoverPrefixList, 16);
+				break;
+			case 'Routing':
+				$bank_number = $this->completedBankNumber($routingPrefixList, 9);
+				break;
+			default:
+				$bank_number = $this->completedBankNumber($visaPrefixList, 16);
+				break;
 		}
+		
+		return $bank_number;
 	}
 		
 	/**
@@ -789,9 +739,8 @@ class Generator{
 	
 		# generate digits
 	
-		while ( strlen($ccnumber) < ($length - 1) )
-		{
-			$ccnumber .= rand(0,9);
+		while (strlen($ccnumber) < ($length - 1)) {
+			$ccnumber .= rand(0, 9);
 		}
 	
 		# Calculate sum
@@ -799,22 +748,19 @@ class Generator{
 		$sum = 0;
 		$pos = 0;
 	
-		$reversedCCnumber = strrev( $ccnumber );
+		$reversedCCnumber = strrev($ccnumber);
 	
-		while ( $pos < $length - 1 )
-		{
+		while ($pos < $length - 1) {
 	
 			$odd = $reversedCCnumber[ $pos ] * 2;
 	
-			if ( $odd > 9 )
-			{
+			if ($odd > 9) {
 				$odd -= 9;
 			}
 	
 			$sum += $odd;
 	
-			if ( $pos != ($length - 2) )
-			{
+			if ($pos != ($length - 2)) {
 				$sum += $reversedCCnumber[ $pos +1 ];
 			}
 	
@@ -823,7 +769,7 @@ class Generator{
 	
 		# Calculate check digit
 	
-		$checkdigit = (( floor($sum/10) + 1) * 10 - $sum) % 10;
+		$checkdigit = ((floor($sum/10) + 1) * 10 - $sum) % 10;
 		$ccnumber .= $checkdigit;
 	
 		return $ccnumber;
@@ -832,24 +778,20 @@ class Generator{
 	/**
 	 * Using PDO for database access to decrease framework dependence. 
 	 */
-	protected function query($sql, $params = array()){
-
+	protected function query($sql, $params = array())
+	{
 		$db_type = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		
-		if ($db_type == 'sqlite')
-		{
+		if ($db_type == 'sqlite') {
 			$sql = str_ireplace('rand()', 'random()', $sql);
 		}
 
-		try
-		{
+		try {
 			$sth = $this->db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-			$sth->setFetchMode(PDO::FETCH_OBJ);  
+			$sth->setFetchMode(PDO::FETCH_OBJ);
 			$sth->execute($params);
 			return $sth;
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			throw $e;
 		}
 	}
@@ -871,11 +813,10 @@ class Generator{
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
