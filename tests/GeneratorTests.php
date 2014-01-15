@@ -7,7 +7,7 @@ use joshmoody\Mock\Generator;
 class GeneratorTests extends \PHPUnit_Framework_TestCase
 {
 	public $generator;
-	
+	public $date_regex = '/^((19|20))\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
 	public function __construct()
 	{
 		$this->generator = new Generator();
@@ -23,14 +23,26 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 */
 	}
 	
-/*
 	public function testGeneratesPerson()
 	{
 		$person = $this->generator->getPerson();
-		print_r($person);
+
 		$this->assertObjectHasAttribute('guid', $person);
+		$this->assertObjectHasAttribute('unique_hash', $person);
+		$this->assertObjectHasAttribute('name', $person);
+		$this->assertObjectHasAttribute('company', $person);
+		$this->assertObjectHasAttribute('address', $person);
+		$this->assertObjectHasAttribute('address2', $person);
+		$this->assertObjectHasAttribute('internet', $person);
+		$this->assertObjectHasAttribute('phone', $person);
+		$this->assertObjectHasAttribute('ssn', $person);
+		$this->assertObjectHasAttribute('dln', $person);
+		$this->assertObjectHasAttribute('dob', $person);
+		$this->assertObjectHasAttribute('credit_card', $person);
+		$this->assertObjectHasAttribute('bank_account', $person);
+		
+		#print_r($person);
 	}
-*/
 	
 	public function testValidFloat()
 	{
@@ -38,6 +50,42 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertInternalType('float', $value);
 	}
 	
+	public function testValidSsn()
+	{
+		$value = $this->generator->getSsn();
+		$this->assertRegExp('/^\d{9}$/', (string) $value);
+	}
+
+	public function testValidDln()
+	{
+		$value = $this->generator->getDln();
+		$this->assertObjectHasAttribute('number', $value);
+		$this->assertObjectHasAttribute('state', $value);
+		$this->assertObjectHasAttribute('expiration', $value);
+	}
+	
+	public function testValidBirthDate(){
+		$value = $this->generator->getBirthDate();
+		$this->assertRegExp($this->date_regex, $value);
+	}
+	
+	public function testValidCreditCard()
+	{
+		$value = $this->generator->getCreditCard();
+		$this->assertObjectHasAttribute('type', $value);
+		$this->assertObjectHasAttribute('number', $value);
+		$this->assertObjectHasAttribute('expiration', $value);
+	}
+
+	public function testValidBankAccount()
+	{
+		$value = $this->generator->getBank();
+		$this->assertObjectHasAttribute('type', $value);
+		$this->assertObjectHasAttribute('name', $value);
+		$this->assertObjectHasAttribute('account', $value);
+		$this->assertObjectHasAttribute('routing', $value);
+	}
+		
 	public function testValidFloatRange()
 	{
 		$min = 100;
@@ -80,7 +128,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($gender == 'M' || $gender == 'F');	
 	}
 	
-	public function testGeneratesName()
+	public function testGeneratesFullName()
 	{
 		$name = $this->generator->getFullName();
 		
@@ -89,7 +137,41 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('last', $name);
 		$this->assertObjectHasAttribute('gender', $name);
 	}
+
+	public function testGeneratesFullNameWithFemaleGender()
+	{
+		$name = $this->generator->getFullName('F');
+		$this->assertEquals('F', $name->gender);
+	}
+
+	public function testGeneratesFullNameWithMaleGender()
+	{
+		$name = $this->generator->getFullName('M');
+		$this->assertEquals('M', $name->gender);
+	}
 	
+	public function testGeneratesAddress()
+	{
+		$address = $this->generator->getAddress();
+		$this->assertObjectHasAttribute('line_1', $address);
+		$this->assertObjectHasAttribute('line_2', $address);
+		$this->assertObjectHasAttribute('city', $address);
+		$this->assertObjectHasAttribute('zip', $address);
+		$this->assertObjectHasAttribute('county', $address);
+		$this->assertObjectHasAttribute('state', $address);
+	}
+
+	public function testGeneratesInternet()
+	{
+		$internet = $this->generator->getInternet();
+
+		$this->assertObjectHasAttribute('domain', $internet);
+		$this->assertObjectHasAttribute('email', $internet);
+		$this->assertObjectHasAttribute('url', $internet);
+		$this->assertObjectHasAttribute('ip', $internet);
+		$this->assertObjectHasAttribute('username', $internet);
+	}
+		
 	public function testValidPhone()
 	{
 		$phone = $this->generator->getPhone('AR', '72201');

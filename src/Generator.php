@@ -12,6 +12,7 @@ use joshmoody\Mock\Models\Zipcode;
 
 use Exception;
 use StdClass;
+use DateTime;
 
 class Generator
 {
@@ -454,9 +455,9 @@ class Generator
 		return $areacode . '-' . $prefix . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
 	}
 	
-	public function getDomain($base = false)
+	public function getDomain($base = null)
 	{
-		$domain = $base ? $base : $this->getLastName();
+		$domain = !empty($base) ? $base : $this->getLastName();
 		
 		$domain = preg_replace('/[^0-9a-z_A-Z]/', '', $domain);
 
@@ -468,7 +469,7 @@ class Generator
 	{
 		$protocol = ['https://www.', 'http://www.', 'http://', 'https://'];
 		
-		$domain = $domain ? $domain : $this->get_domain();
+		$domain = $domain ? $domain : $this->getDomain();
 		
 		return $this->fromArray($protocol)	. $domain;
 	}
@@ -484,39 +485,66 @@ class Generator
 		return join('.', $parts);
 	}
 	
+	public function getUsername($person_name = null)
+	{
+		if (empty($person_name)) {
+			$person_name = $this->getFullName();
+		}
+
+		$usernames = [];
+		
+		# Example Person Name: John Doe.
+		
+		$usernames[] = $person_name->first; // john
+		$usernames[] = $person_name->last; // doe
+		$usernames[] = $person_name->first . '.' . $person_name->last; // john.doe
+		$usernames[] = $person_name->first . $person_name->last; // johndoe
+		$usernames[] = substr($person_name->first, 0, 1) . $person_name->last; //jdoe
+
+		return $this->fromArray($usernames);
+	}
+	
 	/**
 	 * Return an email address.
 	 * You can optionally pass a name to use in the address
 	 */
-	public function getEmail($person_name = false, $domain = false)
+	public function getEmail($person_name = null, $domain = null)
 	{
-		if ($person_name == false) {
-			$person_name = $this->getFullName();
-		}
+		$username = $this->getUsername($person_name);
 		
-		$account_options = [];
-		$account_options[] = $person_name->first; // firstname@example.com
-		$account_options[] = $person_name->last; // lastname@example.com
-		$account_options[] = $person_name->first . '.' . $person_name->last; // firstname.lastname@example.com
-		$account_options[] = $person_name->first . $person_name->last; // firstnamelastname@example.com
-		$account_options[] = substr($person_name->first, 0, 1) . $person_name->last; //firstinitial.lastname@example.com
-
-		$account = $this->fromArray($account_options);
+		$domains = [];
+		$domains[] = !empty($domain) ? $domain : $this->getDomain();
+		$domains[] = 'gmail.com';
+		$domains[] = 'yahoo.com';
+		$domains[] = 'me.com';
+		$domains[] = 'msn.com';
+		$domains[] = 'hotmail.com';
 		
-		$domain_options = [];
-		$domain_options[] = $domain ? $domain : $this->get_domain();
-		$domain_options[] = 'gmail.com';
-		$domain_options[] = 'yahoo.com';
-		$domain_options[] = 'me.com';
-		$domain_options[] = 'msn.com';
-		$domain_options[] = 'hotmail.com';
+		$domain = $this->fromArray($domains);
 		
-		$domain = $this->fromArray($domain_options);
-		
-		return preg_replace('/[^0-9a-z_A-Z.]/', '', strtolower($account)) . '@' . $domain;
+		return preg_replace('/[^0-9a-z_A-Z.]/', '', strtolower($username)) . '@' . $domain;
 	}
 	
-	
+	/**
+	 * Generate internet information.  Domain, Email, URL, IP Address, Username
+	 * 
+	 * @access public
+	 * @param mixed $person_name (default: false)
+	 * @param mixed $company (default: false)
+	 * @return Internet object
+	 */
+	public function getInternet($person_name = null, $company = null)
+	{
+		$internet = new stdclass();
+		$internet->domain	= $this->getDomain($company);
+		$internet->username	= $this->getUserName($person_name);
+		$internet->email	= $this->getEmail($person_name, $internet->domain);
+		$internet->url		= $this->getUrl($internet->domain);
+		$internet->ip		= $this->getIp();
+		
+		return $internet;
+	}
+		
 	/**
 	 * Generate a credit card number.
 	 * 
@@ -578,27 +606,6 @@ class Generator
 		
 		return $bank_account;
 	}
-	
-	
-	/**
-	 * Generate internet information.  Domain, Email, URL, IP Address
-	 * 
-	 * @access public
-	 * @param mixed $person_name (default: false)
-	 * @param mixed $company (default: false)
-	 * @return Internet object
-	 */
-	public function getInternet($person_name = false, $company = false)
-	{
-		$internet = new stdclass();
-		$internet->domain	= $this->getDomain($company);
-		$internet->email	= $this->getEmail($person_name, $internet->domain);
-		$internet->url		= $this->getUrl($internet->domain);
-		$internet->ip		= $this->getIp();
-		
-		return $internet;
-	}
-	
 	
 	/**
 	 * Generate a Person object with all relevent attributes.
