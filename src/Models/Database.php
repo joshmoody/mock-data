@@ -6,6 +6,8 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Database
 {
+	public static $driver = null;
+	
 	public static function init($config = null)
 	{
 		$defaults = [
@@ -23,12 +25,23 @@ class Database
 		
 		if (is_array($config))	{
 			$options = array_merge($defaults, $config);
-			
-			$capsule->addConnection($options);
 		} else {
-			$capsule->addConnection($defaults);
+			$options = $defaults;
 		}
-
+		
+		$capsule->addConnection($options);
+		$capsule->setAsGlobal();
 		$capsule->bootEloquent();
+		
+		self::$driver = $options['driver'];
+	}
+	
+	public static function random()
+	{
+		if (self::$driver == 'sqlite') {
+			return 'random()';
+		} else {
+			return 'rand()';
+		}
 	}
 }

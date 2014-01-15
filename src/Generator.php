@@ -2,42 +2,26 @@
 
 namespace joshmoody\Mock;
 
-use PDO;
+use Illuminate\Database\Capsule\Manager as DB;
+
+use joshmoody\Mock\Models\Database;
+use joshmoody\Mock\Models\LastName;
+use joshmoody\Mock\Models\FirstName;
+use joshmoody\Mock\Models\Street;
+use joshmoody\Mock\Models\Zipcode;
+
 use Exception;
 use StdClass;
 
 class Generator
 {
 
-	protected $db;
-	
-	public function __construct($opts = array('sqlite' => true))
+	public function __construct($opts = [])
 	{
-		$hostname = null;
-		$username = null;
-		$password = null;
-		$database = null;
-		$dbdriver = null;
-		$sqlite	  = false;
-		
-		extract($opts, EXTR_IF_EXISTS);
-
-		// Build PDO DSN.
-		if ($sqlite === true) {
-			$db_path = dirname(__DIR__) . '/data/database.sqlite';
-			
-			$dsn = sprintf('sqlite:%s', $db_path);
-		} elseif ($dbdriver == 'sqlite') {
-			$dsn = sprintf('sqlite:%s', $database);
+		if (is_array($opts) && array_key_exists('dsn', $opts)) {
+			Database::init($opts['dsn']);
 		} else {
-			$dsn = sprintf('%s:host=%s;dbname=%s', $dbdriver, $hostname, $database);
-		}
-		
-		try {
-			$this->db = new PDO($dsn, $username, $password);
-			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch (Exception $e) {
-			throw $e;
+			Database::init();
 		}
 	}
 
@@ -46,7 +30,7 @@ class Generator
 	 */
 	public function getFloat($min = 0, $max = 10000, $precision = 2)
 	{
-		$num = rand($min, $max) . '.' . str_pad(rand(1, 99), 2, '0', STR_PAD_LEFT);
+		$num = rand($min, $max) . '.' . str_pad(rand(1, 99), $precision, '0', STR_PAD_LEFT);
 		return round($num, $precision);
 	}
 	
@@ -121,7 +105,7 @@ class Generator
 	/**
 	 * Return a random value from an array
 	 */
-	public function fromArray($array = array())
+	public function fromArray($array = [])
 	{
 		if (count($array) > 0) {
 			return $array[rand(0, count($array)-1)];
@@ -156,7 +140,7 @@ class Generator
 	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
 	 * @param string $format date() format for return value.  Default: Y-m-d
 	 */
-	public function getDate($params = array(), $format = 'Y-m-d')
+	public function getDate($params = [], $format = 'Y-m-d')
 	{
 		foreach ($params as $k => $v) {
 			$$k = $v;
@@ -178,28 +162,35 @@ class Generator
 			$max_month = 12;
 		}
 		
-		$rand_year		= rand($min_year, $max_year);
-		$rand_month		= rand($min_month, $max_month);
-		$days_in_month	= date('t', strtotime($rand_year . '/' . $rand_month . '/' . '01'));
-		$rand_day		= rand(1, $days_in_month);
+		// Pick a random year and month within the valid ranges.
+		$rand_year	= rand($min_year, $max_year);
+		$rand_month	= rand($min_month, $max_month);
+
+		// Create a date object using the first day of this random month/year.
+		$date = DateTime::createFromFormat('Y-m-d', join('-', [$rand_year, $rand_month, '01']));
 		
-		return date($format, strtotime($rand_year . '/' . $rand_month . '/' . $rand_day));
+		// How many days in this random month?
+		$days_in_month = $date->format('t');
+
+		// Pick a day of the month.
+		$rand_day = rand(1, $days_in_month);
+		
+		return DateTime::createFromFormat('Y-m-d', join('-', [$rand_year, $rand_month, $rand_day]))->format($format);
 	}
 	
 	/**
-	 * Generate a reasonable birthdate.	 Default Range: 1930-1990
+	 * Generate a reasonable birthdate.	 Default Age: 20-80 years.
 	 */
-	public function getBirthDate($params = array(), $format = 'Y-m-d')
+	public function getBirthDate($params = [], $format = 'Y-m-d')
 	{
-		$params['min_year'] = array_key_exists('min_year', $params) ? $params['min_year'] : 1930;
-		$params['max_year'] = array_key_exists('max_year', $params) ? $params['max_year'] : 1980;
+		$params['min_year'] = array_key_exists('min_year', $params) ? $params['min_year'] : date('Y') - 80;
+		$params['max_year'] = array_key_exists('max_year', $params) ? $params['max_year'] : date('Y') - 20;
 		return $this->getDate($params, $format);
 	}
 
 	public function getExpiration($format = 'm/Y')
 	{
-		$date_params = array('min_year' => date('Y'),
-							'max_year' => date('Y') + 3);
+		$date_params = ['min_year' => date('Y'), 'max_year' => date('Y') + 3];
 		return $this->getDate($date_params, $format);
 	}
 	
@@ -222,6 +213,8 @@ class Generator
 	 * The default min and max denote numbers assigned in Arkansas
 	 * See http://socialsecuritynumerology.com/prefixes.php for
 	 * other States' ranges.
+	 *
+	 * @todo: Make the default range valid for all 50 states.
 	 */
 	public function getSsn($min = 429000001, $max = 432999999)
 	{
@@ -241,7 +234,7 @@ class Generator
 			$gender = $this->getGender();
 		}
 
-		return $this->query('SELECT name FROM firstnames WHERE gender = :gender AND rank <= 250 ORDER BY RAND() LIMIT 1', array(':gender' => $gender))->fetch()->name;
+		return FirstName::where('gender', $gender)->where('rank', '<=', 250)->orderByRaw(Database::random())->first()->name;
 	}
 	
 	/**
@@ -249,11 +242,7 @@ class Generator
 	 */
 	public function getGender()
 	{
-		if (rand(1, 100) % 2 == 0) {
-			return 'F';
-		} else {
-			return 'M';
-		}
+		return $this->fromArray(['F','M']);
 	}
 
 	/**
@@ -267,7 +256,7 @@ class Generator
 	 */
 	public function getLastName($max = 250)
 	{
-		return $this->query('SELECT name FROM lastnames WHERE rank <= :rank ORDER BY RAND() LIMIT 1', array(':rank' => 250))->fetch()->name;
+		return LastName::where('rank', '<=', $max)->orderByRaw(Database::random())->first()->name;
 	}
 	
 	/**
@@ -283,7 +272,7 @@ class Generator
 	 */
 	public function getLetter()
 	{
-		$letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+		$letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 		return $this->fromArray($letters);
 	}
 	
@@ -315,14 +304,14 @@ class Generator
 	{
 		$number = rand(100, 9999);
 		
-		$street_name = $this->query('SELECT name FROM streets ORDER BY RAND() LIMIT 1')->fetch()->name;
-		
+		$street_name = Street::orderByRaw(Database::random())->first()->name;
+
 		return $number . ' ' . $street_name;
 	}
 	
 	public function getApartment()
 	{
-		$types = array('Apt.', 'Apartment', 'Ste.', 'Suite', 'Box');
+		$types = ['Apt.', 'Apartment', 'Ste.', 'Suite', 'Box'];
 		
 		if ($this->getBool(true, false)) {
 			$extra = $this->getLetter();
@@ -343,9 +332,9 @@ class Generator
 	{
 		
 		if ($state_code) {
-			$res = $this->query('SELECT state_code, state FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch();
+			$res = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first();
 		} else {
-			$res = $this->query('SELECT state_code, state FROM zipcodes ORDER BY RAND() LIMIT 1')->fetch();
+			$res = Zipcode::orderByRaw(Database::random())->first();
 		}
 		
 		$State = new stdclass();
@@ -361,18 +350,18 @@ class Generator
 	{
 	
 		if ($state_code) {
-			return $this->query('SELECT zip FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch()->zip;
+			return Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first()->zip;
 		} else {
-			return $this->query('SELECT zip from zipcodes ORDER BY RAND() LIMIT 1')->fetch()->zip;
+			return Zipcode::orderByRaw(Database::random())->first()->zip;
 		}
 	}
 
 	public function getCity($state_code = false)
 	{
 		if ($state_code) {
-			return $this->query('SELECT city FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch()->city;
+			return Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first()->city;
 		} else {
-			return $this->query('SELECT city from zipcodes ORDER BY RAND() LIMIT 1')->fetch()->city;
+			return Zipcode::orderByRaw(Database::random())->first()->city;
 		}
 	}
 	
@@ -383,16 +372,15 @@ class Generator
 	{
 		$address = new stdclass();
 
-		if ($zip) {
-			$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes WHERE zip = :zip ORDER BY RAND() LIMIT 1', array(':zip' => $zip))->fetch();
+		if ($zip && $state_code) {
+			$result = Zipcode::where('zip', $zip)->where('state_code', $state_code)->orderByRaw(Database::random())->first();
+		} elseif ($zip) {
+			$result = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first();
+		} elseif ($state_code) {
+			$result = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first();
 		} else {
-			if ($state_code) {
-				$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch();
-			} else {
-				$result = $this->query('SELECT city, state, state_code, zip, county FROM zipcodes ORDER BY RAND() LIMIT 1')->fetch();
-			}
+			$result = Zipcode::orderByRaw(Database::random())->first();
 		}
-		
 
 		$address->line_1 = $this->getStreet();
 		
@@ -402,9 +390,9 @@ class Generator
 			$address->line_2 = null;
 		}
 		
-		$address->city		= $result->city;
-		$address->zip		= $result->zip;
-		$address->county	= $result->county;
+		$address->city = $result->city;
+		$address->zip = $result->zip;
+		$address->county = $result->county;
 		
 		$address->state = new stdclass();
 		$address->state->code = $result->state_code;
@@ -419,7 +407,7 @@ class Generator
 	 */
 	public function getCompanyName($base_name = null)
 	{
-		$suffixes = array('Corporation', 'Company', 'Company, Limited', 'Computer Repair', 'Incorporated', 'and Sons', 'Group', 'Group, PLC', 'Furniture', 'Flowers', 'Sales', 'Systems', 'Tire', 'Auto', 'Plumbing', 'Roofing', 'Realty', 'Foods', 'Books');
+		$suffixes = ['Corporation', 'Company', 'Company, Limited', 'Computer Repair', 'Incorporated', 'and Sons', 'Group', 'Group, PLC', 'Furniture', 'Flowers', 'Sales', 'Systems', 'Tire', 'Auto', 'Plumbing', 'Roofing', 'Realty', 'Foods', 'Books'];
 		
 		if (!$base_name) {
 			$base_name = $this->getLastName();
@@ -431,17 +419,19 @@ class Generator
 	/**
 	 * Return a phone number
 	 */
-	public function getPhone($state_code = false, $zip_code = false, $include_toll_free = false)
+	public function getPhone($state_code = false, $zip = false, $include_toll_free = false)
 	{
 
-		if ($zip_code) {
-			$areacodes = $this->query('SELECT area_codes FROM zipcodes WHERE zip = :zip ORDER BY RAND() LIMIT 1', array(':zip' => $zip_code))->fetch()->area_codes;
+		$areacodes = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first()->area_codes;
+
+		if ($zip) {
+			$areacodes = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first()->area_codes;
 		} else {
 			// Get a random state if state not provided
 			$state_code = $state_code ? $state_code : $this->getState()->code;
 			
 			// Get area codes appropriate for this state
-			$areacodes = $this->query('SELECT area_codes FROM zipcodes WHERE state_code = :state_code ORDER BY RAND() LIMIT 1', array(':state_code' => $state_code))->fetch()->area_codes;
+			$areacodes = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first()->area_codes;
 		}
 
 		// Get list of valid area codes for the state/zip code
@@ -470,13 +460,13 @@ class Generator
 		
 		$domain = preg_replace('/[^0-9a-z_A-Z]/', '', $domain);
 
-		$tld = array('.com', '.net', '.us');
+		$tld = ['.com', '.net', '.us', '.biz'];
 		return strtolower($domain) . $this->fromArray($tld);
 	}
 	
 	public function getUrl($domain = false)
 	{
-		$protocol = array('https://www.', 'http://www.', 'http://', 'https://');
+		$protocol = ['https://www.', 'http://www.', 'http://', 'https://'];
 		
 		$domain = $domain ? $domain : $this->get_domain();
 		
@@ -485,7 +475,7 @@ class Generator
 	
 	public function getIp()
 	{
-		$parts = array();
+		$parts = [];
 		
 		for ($i=0; $i<4; $i++) {
 			$parts[] = $this->getInteger(0, 255);
@@ -504,19 +494,22 @@ class Generator
 			$person_name = $this->getFullName();
 		}
 		
-		$account_options = array();
+		$account_options = [];
 		$account_options[] = $person_name->first; // firstname@example.com
 		$account_options[] = $person_name->last; // lastname@example.com
 		$account_options[] = $person_name->first . '.' . $person_name->last; // firstname.lastname@example.com
 		$account_options[] = $person_name->first . $person_name->last; // firstnamelastname@example.com
-		
+		$account_options[] = substr($person_name->first, 0, 1) . $person_name->last; //firstinitial.lastname@example.com
+
 		$account = $this->fromArray($account_options);
 		
-		$domain_options = array();
+		$domain_options = [];
 		$domain_options[] = $domain ? $domain : $this->get_domain();
 		$domain_options[] = 'gmail.com';
 		$domain_options[] = 'yahoo.com';
 		$domain_options[] = 'me.com';
+		$domain_options[] = 'msn.com';
+		$domain_options[] = 'hotmail.com';
 		
 		$domain = $this->fromArray($domain_options);
 		
@@ -536,10 +529,10 @@ class Generator
 		// Get a random card type
 
 		if ($weighted) {
-			$weight[] = array('American Express', 1);
-			$weight[] = array('Discover'		, 2);
-			$weight[] = array('MasterCard'		, 10);
-			$weight[] = array('Visa'			, 10);
+			$weight[] = ['American Express', 1];
+			$weight[] = ['Discover', 2];
+			$weight[] = ['MasterCard', 10];
+			$weight[] = ['Visa', 10];
 			
 			foreach ($weight as $w) {
 				$type = $w[0];
@@ -550,7 +543,7 @@ class Generator
 				}
 			}
 		} else {
-			$card_types = array('American Express', 'Discover', 'MasterCard', 'Visa');
+			$card_types = ['American Express', 'Discover', 'MasterCard', 'Visa'];
 		}
 
 		$cc = new stdclass();
@@ -577,11 +570,8 @@ class Generator
 	{
 		$bank_account = new stdclass();
 	
-		$bank_types = array('Checking', 'Savings');
-		$bank_account->type = $this->fromArray($bank_types);
-		
-		$bank_names = array('First National', 'Arvest', 'Regions', 'Metropolitan', 'Wells Fargo');
-		$bank_account->name = $this->fromArray($bank_names);
+		$bank_account->type = $this->fromArray(['Checking', 'Savings']);
+		$bank_account->name = $this->fromArray(['First National', 'Arvest', 'Regions', 'Metropolitan', 'Wells Fargo']);
 		
 		$bank_account->account = $this->getInteger('1000', '999999999');
 		$bank_account->routing = $this->getBankNumber('Routing');
@@ -773,27 +763,6 @@ class Generator
 		$ccnumber .= $checkdigit;
 	
 		return $ccnumber;
-	}
-
-	/**
-	 * Using PDO for database access to decrease framework dependence. 
-	 */
-	protected function query($sql, $params = array())
-	{
-		$db_type = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
-		
-		if ($db_type == 'sqlite') {
-			$sql = str_ireplace('rand()', 'random()', $sql);
-		}
-
-		try {
-			$sth = $this->db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-			$sth->setFetchMode(PDO::FETCH_OBJ);
-			$sth->execute($params);
-			return $sth;
-		} catch (Exception $e) {
-			throw $e;
-		}
 	}
 }
 
