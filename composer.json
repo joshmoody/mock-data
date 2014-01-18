@@ -1,12 +1,12 @@
 {
     "name": "joshmoody/mock-data",
     "description": "Generate realistic test data.",
-    "homepage": "https://github.com/joshmoody/mock-data-generator",
+    "homepage": "https://github.com/joshmoody/mock-data",
     "license": "MIT",
     "authors": [
         {
             "name": "Josh Moody",
-            "email": "josh@joshmoody.com"
+            "email": "jgmoody@gmail.com"
         }
     ],
 	"autoload":{
