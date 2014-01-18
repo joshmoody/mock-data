@@ -24,6 +24,23 @@ function get_filename($file)
 	return sprintf('%s/data/%s', dirname(__DIR__), $file);
 }
 
+function extract_datafiles()
+{
+	$archive = get_filename('data.zip');
+	$extract_path = sprintf('%s/data', dirname(__DIR__));
+	
+	$zip = new \ZipArchive;
+	$res = $zip->open($archive);
+	
+	if ($res === true) {
+		$zip->extractTo($extract_path);
+		$zip->close();
+		printf("Extracted zip archive to %s \n", $extract_path);
+	} else {
+		printf("Extracting zip archive %s to %s failed with code %s \n", $archive, $extract_path, $res);
+	}
+}
+
 function load_lastnames($limit = 500)
 {
 
@@ -311,6 +328,8 @@ function load_zipcodes()
 	
 	return $loaded;
 }
+
+extract_datafiles();
 
 $loaded = load_lastnames();
 print "Loaded $loaded last names\n";
