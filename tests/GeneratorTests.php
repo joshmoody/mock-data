@@ -3,6 +3,7 @@
 namespace joshmoody\Mock\Tests;
 
 use joshmoody\Mock\Generator;
+use joshmoody\Mock\Models\Database;
 
 class GeneratorTests extends \PHPUnit_Framework_TestCase
 {
@@ -15,17 +16,8 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 
 	public function __construct()
 	{
-		$this->generator = new Generator();
-/*
-		$opts = array();
-		$opts['hostname'] = getenv('db_hostname');
-		$opts['username'] = getenv('db_username');
-		$opts['password'] = getenv('db_password');
-		$opts['database'] = getenv('db_database');
-		$opts['dbdriver'] = getenv('db_driver');
-
-		$this->generator = new Generator($opts);
-*/
+		$dsn = Database::parseDsn(getenv('dsn'));
+		$this->generator = new Generator(['dsn' => $dsn]);
 	}
 	
 	public function testGeneratesPerson()

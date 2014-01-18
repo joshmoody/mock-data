@@ -3,6 +3,7 @@
 namespace joshmoody\Mock\Models;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Prelude\Dsn\DsnParser;
 
 class Database
 {
@@ -23,7 +24,7 @@ class Database
 		
 		$capsule = new Capsule;
 		
-		if (is_array($config))	{
+		if (is_array($config)) {
 			$options = array_merge($defaults, $config);
 		} else {
 			$options = $defaults;
@@ -43,5 +44,25 @@ class Database
 		} else {
 			return 'rand()';
 		}
+	}
+	
+	public static function parseDsn($string = null)
+	{
+		$opts = null;
+		
+		if (!empty($string))
+		{
+			$dsn = (object) DsnParser::parseUrl($string)->toArray();
+			
+			$opts = [
+				'driver'	=> $dsn->driver,
+				'host'		=> $dsn->host,
+				'database'	=> $dsn->dbname,
+				'username'	=> $dsn->user,
+				'password'	=> $dsn->pass
+			];
+		}
+
+		return $opts;
 	}
 }

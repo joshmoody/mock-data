@@ -2,17 +2,13 @@
 <phpunit bootstrap="./phpunit.php">
 
 	<testsuites>
-        <testsuite name="Mock Data Generator Test Suite">
-            <directory suffix="Tests.php">./tests</directory>
-        </testsuite>
-    </testsuites>
+		<testsuite name="Mock Data Generator Test Suite">
+			<directory suffix="Tests.php">./tests</directory>
+		</testsuite>
+	</testsuites>
 	
 	<php>
-	  <env name="db_hostname" value="localhost"/>
-	  <env name="db_username" value="root"/>
-	  <env name="db_password" value="root"/>
-	  <env name="db_database" value="mock_data"/>
-	  <env name="db_driver" value="mysql"/>
+		<env name="dsn" value=""/>
 	</php>
 
 </phpunit>

@@ -7,13 +7,19 @@ use joshmoody\Mock\Models\LastName;
 use joshmoody\Mock\Models\FirstName;
 use joshmoody\Mock\Models\Street;
 use joshmoody\Mock\Models\Zipcode;
-
 use Illuminate\Database\Capsule\Manager as DB;
 
 require_once (dirname(__DIR__)) . '/vendor/autoload.php';
 
-#$opts = ['driver' => 'mysql', 'host' => 'localhost', 'database' => 'mock', 'username' => 'root', 'password' => 'root'];
-$opts = ['driver' => 'sqlite'];
+if ($argc > 1) {
+	// Parse the DSN from the command line param
+	// Example: php bin/php mysql://username:password@hostname/databasename
+	$opts = Database::parseDsn($argv[1]);
+} else {
+	// Default sqlite database
+	$opts = ['driver' => 'sqlite'];
+}
+
 Database::init($opts);
 
 // Disable query log so we don't run out of memory logging all these inserts.
