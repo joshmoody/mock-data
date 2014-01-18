@@ -565,7 +565,7 @@ class Generator
 		$usernames[] = $person_name->first . $person_name->last; // johndoe
 		$usernames[] = substr($person_name->first, 0, 1) . $person_name->last; //jdoe
 
-		return $this->fromArray($usernames);
+		return strtolower($this->fromArray($usernames));
 	}
 	
 	/**
