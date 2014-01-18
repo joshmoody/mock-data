@@ -17,111 +17,112 @@ Many different types of mock data can be generated with this library.  From basi
 	<?php
 	$generator = new joshmoody\Mock\Generator();
 	
-	$person = $generator->getPerson();
+	$person = $generator->getPerson('AR');
 	print_r($person);
 
 Example output:
 
-	stdClass Object	
+	stdClass Object
 	(
-	    [guid] => ecf66465-9a97-d134-79ad-f2a139437a95
-	    [unique_hash] => 35e4ac33b1a89fde70f7ef0254e835282a531a88
+	    [guid] => 83e55aea-0313-9c34-557c-642483c526d9
+	    [unique_hash] => 6a396b5876dd1557f237a1871c31ba1244b10506
 	    [name] => stdClass Object
 	        (
-	            [first] => Edgar
-	            [middle] => Charles
-	            [last] => Fowler
+	            [first] => Darren
+	            [middle] => Jay
+	            [last] => James
 	            [gender] => M
 	        )
 	
-	    [company] => Fowler Realty
+	    [company] => Mason Furniture
 	    [address] => stdClass Object
 	        (
-	            [line_1] => 3217 Madison Court
-	            [line_2] => Apartment W
-	            [city] => Poteau
-	            [zip] => 74953
-	            [county] => Le Flore
+	            [line_1] => 7353 Main Street
+	            [line_2] => 
+	            [city] => Farmington
+	            [zip] => 72730
+	            [county] => Washington
 	            [state] => stdClass Object
 	                (
-	                    [code] => OK
-	                    [name] => Oklahoma
+	                    [code] => AR
+	                    [name] => Arkansas
 	                )
 	
 	        )
 	
 	    [address2] => stdClass Object
 	        (
-	            [line_1] => 9552 12th Street
-	            [line_2] => Apt. 3693
-	            [city] => Poteau
-	            [zip] => 74953
-	            [county] => Le Flore
+	            [line_1] => 6817 Devon Court
+	            [line_2] => Ste. 6337
+	            [city] => Farmington
+	            [zip] => 72730
+	            [county] => Washington
 	            [state] => stdClass Object
 	                (
-	                    [code] => OK
-	                    [name] => Oklahoma
+	                    [code] => AR
+	                    [name] => Arkansas
 	                )
 	
 	        )
 	
 	    [internet] => stdClass Object
 	        (
-	            [domain] => fowlerrealty.net
-	            [email] => edgar.fowler@fowlerrealty.net
-	            [url] => https://www.fowlerrealty.net
-	            [ip] => 0.144.51.92
+	            [domain] => masonfurniture.biz
+	            [username] => darrenjames
+	            [email] => darren.james@gmail.com
+	            [url] => http://masonfurniture.biz
+	            [ip] => 164.173.80.196
 	        )
 	
 	    [phone] => stdClass Object
 	        (
-	            [home] => 918-758-7706
-	            [mobile] => 918-837-4856
-	            [work] => 918-885-2146
+	            [home] => 479-341-2117
+	            [mobile] => 479-308-7757
+	            [work] => 479-146-6536
 	        )
 	
-	    [ssn] => 431835640
+	    [ssn] => 429326237
 	    [dln] => stdClass Object
 	        (
-	            [number] => 963852749
+	            [number] => 969767857
 	            [state] => stdClass Object
 	                (
-	                    [code] => OK
-	                    [name] => Oklahoma
+	                    [code] => AR
+	                    [name] => Arkansas
 	                )
 	
-	            [expiration] => 08/2013
+	            [expiration] => 08/2015
 	        )
 	
-	    [dob] => 1963-08-25
+	    [dob] => 1939-05-26
 	    [credit_card] => stdClass Object
 	        (
 	            [type] => Visa
-	            [number] => 4024007171997611
-	            [expiration] => 08/2016
+	            [number] => 4916441193760049
+	            [expiration] => 04/2015
 	        )
 	
 	    [bank_account] => stdClass Object
 	        (
 	            [type] => Checking
-	            [name] => Wells Fargo
-	            [account] => 192757996
-	            [routing] => 117062752
+	            [name] => Regions
+	            [account] => 396457523
+	            [routing] => 076098730
 	        )
 	
 	)
 
 Each type of data element above may be generated independently.  Examples:
 
-	getFirstName($gender = NULL)
+	getFirstName()
 	getLastName()
-	getFullName($gender = NULL)
+	getFullName('M')
 	getStreet()
 	getApartment()
 	getState()
-	getZip($state_code = FALSE)
-	getCity($state_code = FALSE)
-	getAddress($state_code = FALSE)
+	getZip('AR')
+	getCity('AR')
+	getAddress('AR')
 	
 Plus many more. See src/joshmoody/Mock/Generator.php for all available options.
 	
@@ -132,74 +133,78 @@ This library is designed to create very realistic-looking data.
 	- If a state is specified:
 		- The city will be a valid city in that state
 		- The area code, zip, and county will be correct for that city
+		- The SSN will be in a valid range for that state
 	- The email address will contain some portion of their name
 	- First/middle name will be appropriate for the selected gender
 	- For credit card numbers:
 		- The prefix and length will match the type of card generated (MasterCard, Visa, etc.)
 
+## Random Data
+In addition to realistic data generation, you can also use this library to easily pick a random value from an array.
+
+	<?php
+	$color = $generator->fromArray(['Red' , 'White', 'Blue']);
+
+Or get a boolean.
+
+	<?php
+	$bool = $generator->getBool(); // Returns bool(true) or bool(false);
+
+Or get a string representation of a boolean.
+
+	<?php
+	$yes_no = $generator->getBool('Yes', 'No'); // Returns string(Yes) or string(No);
+	
+
+
 ## Requirements
 - MySQL or SQlite
-- PHP >= 5.3.3 with MySQL _or_ SQlite PDO extension.
+- PHP >= 5.4 with MySQL _or_ SQlite PDO extension.
 
 ## Installation
 
 This library is distributed as a composer package.	
 	
-	$ composer require --dev joshmoody/mock-data-generator dev-master
+	$ composer require --dev joshmoody/mock-data dev-master
 
-https://packagist.org/packages/joshmoody/mock-data-generator
+https://packagist.org/packages/joshmoody/mock-data
 
 **You can use either SQLite or MySQL for storing the base mock data elements.**
 
-## Setup - SQLite
-Extract data/database.sqlite.zip to src/joshmoody/Mock/
-	
-	$ unzip -j data/database.sqlite.zip -d src/joshmoody/Mock/
+## Zero Configuration Instructions - SQLite
+The package ships with a sqlite database containing all the data needed for generating random records.
 
-Call the constructor without passing an options array.
+To use the default sqlite database, call the constructor without passing an options array.
 	
 	<?php
 	$generator = new joshmoody\Mock\Generator();
 
-## Setup - MySQL
-Run the SQL statements from data/create\_tables.sql and data/load\_tables.sql to generate all the base data.
+## Easy Configuration Instructions - MySQL
+Run the load script in bin/load.php and pass a dsn string (eg mysql://username:password@host/dbname) as the first parameter to the script.
 
-	$ mysql -u root -p -h localhost < data/create_tables.sql
-	
-	$ mysql -u root -p -h localhost < data/load_tables.sql
+	$ php bin/load.php mysql://root:root@localhost/mock
 
-Pass your database info to the constructor:
+> NOTE: The database must already exist. The script will create the tables in that database.
 
-	<?php
-	$opts = array('hostname' => 'localhost', 'username' => 'root', 'password' => 'root', 'database' => 'mock_data', 'db_driver' => 'mysql');
-	$generator = new joshmoody\Mock\Generator($opts);
+Once the script has set up the database tables, you can pass in your dsn string when calling the constructor.
+	$generator = new joshmoody\Mock\Generator(['dsn' => 'mysql://root:root@localhost/mock']);
 
  
 ## Reloading Data
-You can regenerate the database from the source data files.
-You should only need to do this if modifying the source data to refresh the database.  Otherwise, just use the installation steps outlined above.
-All commands should be executed from the data directory.
+You can use the load script above to regenerate the sqlite database at any time. Run it the same as the MySQL Instructions above, but without any parameters.
 
-Parse all the source data files and construct SQL to insert into the database.
+	$ php bin/load.php
 
-	$ php generate_sql.php > /tmp/mock_data.sql
+This may be useful if modifying the source data to better fit your needs.
 
-Alter this statement as needed to match your username and database name
-
-	$ mysql -u root -p -h localhost mock_data < /tmp/mock_data.sql
-
-## If you need to update the sqlite database:
-
-	$ zip -r -X data/database.sqlite.zip data/database.sqlite
-	
 ## Acknowledgements
 
 The geographic and demographic source data used in this library was derived from several places, including:
 
-- http://www.unitedstateszipcodes.org/zip-code-database/
-- http://www.50states.com/tools/postal.htm
-- https://www.census.gov/genealogy/www/data/1990surnames/names_files.html
-- http://www.livingplaces.com/streets/most-popular_street_names.html
+- <http://www.unitedstateszipcodes.org/zip-code-database/>
+- <http://www.50states.com/tools/postal.htm>
+- <https://www.census.gov/genealogy/www/data/1990surnames/names_files.html>
+- <http://www.livingplaces.com/streets/most-popular_street_names.html>
 
 
 ## License and copyright
