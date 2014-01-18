@@ -2,5 +2,5 @@
 ._*
 /vendor
 /composer.lock
-/data/database.sqlite
-/src/joshmoody/Mock/database.sqlite
+/data/*.txt
+/data/*.csv
