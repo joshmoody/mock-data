@@ -8,6 +8,11 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 {
 	public $generator;
 	public $date_regex = '/^((19|20))\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
+	public $credit_card_regex = '/^[\d]{15,16}$/';
+	public $credit_card_expiration_date_regex = '/^(0[1-9]|1[012])\/(19|20)\d\d$/';
+	public $ssn_regex = '/^\d{9}$/';
+	public $phone_regex = '/^\d{3}-\d{3}-\d{4}$/';
+
 	public function __construct()
 	{
 		$this->generator = new Generator();
@@ -40,8 +45,6 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('dob', $person);
 		$this->assertObjectHasAttribute('credit_card', $person);
 		$this->assertObjectHasAttribute('bank_account', $person);
-		
-		#print_r($person);
 	}
 	
 	public function testValidFloat()
@@ -53,7 +56,13 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidSsn()
 	{
 		$value = $this->generator->getSsn();
-		$this->assertRegExp('/^\d{9}$/', (string) $value);
+		$this->assertRegExp($this->ssn_regex, (string) $value);
+	}
+
+	public function testValidSsnForState()
+	{
+		$value = $this->generator->getSsn('AR');
+		$this->assertRegExp($this->ssn_regex, (string) $value);
 	}
 
 	public function testValidDln()
@@ -75,6 +84,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('type', $value);
 		$this->assertObjectHasAttribute('number', $value);
 		$this->assertObjectHasAttribute('expiration', $value);
+		
+		$this->assertRegExp($this->credit_card_regex, $value->number, 'Card number must be 15 or 16 digits.');
+		$this->assertRegExp($this->credit_card_expiration_date_regex, $value->expiration, 'Expiration date should be mm/yyyy format.');
 	}
 
 	public function testValidBankAccount()
@@ -105,7 +117,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$parts = explode('.', $value);
 		$decimals = strlen($parts[1]);
 		
-		$this->assertEquals($precision, $decimals, 'Float with correct precision');
+		$this->assertTrue($decimals <= $precision, 'Float with correct precision');
 	}
 	
 	public function testValidInteger()
@@ -175,6 +187,24 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidPhone()
 	{
 		$phone = $this->generator->getPhone('AR', '72201');
-		$this->assertRegExp('/^\d{3}-\d{3}-\d{4}$/', $phone);
+		$this->assertRegExp($this->phone_regex, $phone);
+	}
+	
+	public function testValidString()
+	{
+		$value = $this->generator->getString();
+		$this->assertInternalType('string', $value);
+	}
+
+	public function testValidStringLettersOnly()
+	{
+		$value = $this->generator->getString('letter');
+		$this->assertRegExp('/^[a-zA-Z]+$/', $value);
+	}
+
+	public function testValidStringLength()
+	{
+		$value = $this->generator->getString(null, 5);
+		$this->assertEquals(5, strlen($value));
 	}
 }
