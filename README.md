@@ -187,9 +187,10 @@ Run the load script in bin/load.php and pass a dsn string (eg mysql://username:p
 > NOTE: The database must already exist. The script will create the tables in that database.
 
 Once the script has set up the database tables, you can pass in your dsn string when calling the constructor.
+
+	<?php
 	$generator = new joshmoody\Mock\Generator(['dsn' => 'mysql://root:root@localhost/mock']);
 
- 
 ## Reloading Data
 You can use the load script above to regenerate the sqlite database at any time. Run it the same as the MySQL Instructions above, but without any parameters.
 
