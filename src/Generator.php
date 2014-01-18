@@ -31,7 +31,7 @@ class Generator
 	 */
 	public function getFloat($min = 0, $max = 10000, $precision = 2)
 	{
-		$num = rand($min, $max) . '.' . str_pad(rand(1, 99), $precision, '0', STR_PAD_LEFT);
+		$num = rand($min, $max) . '.' . str_pad(rand(1, 9999), $precision, '0', STR_PAD_LEFT);
 		return round($num, $precision);
 	}
 	
@@ -61,7 +61,7 @@ class Generator
 	 */
 	public function getString($type = 'letter', $desired_length = false)
 	{
-		if (!$desired_length) {
+		if (empty($desired_length)) {
 			$desired_length = $this->getInteger(1, 50);
 		}
 		
@@ -210,16 +210,80 @@ class Generator
 	}
 
 	/**
-	 * Generate a 9 digit number that could be an SSN.
-	 * The default min and max denote numbers assigned in Arkansas
-	 * See http://socialsecuritynumerology.com/prefixes.php for
-	 * other States' ranges.
-	 *
-	 * @todo: Make the default range valid for all 50 states.
+	 * Generate a 9 digit number that could be an SSN for a given state.
+	 * SSN Prefixes from http://socialsecuritynumerology.com/prefixes.php for
 	 */
-	public function getSsn($min = 429000001, $max = 432999999)
+	public function getSsn($state_code = null)
 	{
-		return rand($min, $max);
+		if (empty($state_code)) {
+			$state_code = $this->getState()->code;
+		}
+
+		/**
+		 Prefixes 580-xx-xxxx and up are allocated to US Territories and other states.
+		 The below array structure does not support multiple prefix ranges, but this will do for now.
+		 We are looking for FAKE data, not COMPLETE data.
+		 */
+		$ranges = [];
+		$ranges['NH'] = ['min_prefix' => 1, 'max_prefix' => 3];
+		$ranges['ME'] = ['min_prefix' => 4, 'max_prefix' => 7];
+		$ranges['VT'] = ['min_prefix' => 8, 'max_prefix' => 9];
+		$ranges['MA'] = ['min_prefix' => 10, 'max_prefix' => 34];
+		$ranges['RI'] = ['min_prefix' => 35, 'max_prefix' => 39];
+		$ranges['CT'] = ['min_prefix' => 40, 'max_prefix' => 49];
+		$ranges['NY'] = ['min_prefix' => 50, 'max_prefix' => 134];
+		$ranges['NJ'] = ['min_prefix' => 135, 'max_prefix' => 158];
+		$ranges['PA'] = ['min_prefix' => 159, 'max_prefix' => 211];
+		$ranges['MD'] = ['min_prefix' => 212, 'max_prefix' => 220];
+		$ranges['DE'] = ['min_prefix' => 221, 'max_prefix' => 222];
+		$ranges['VA'] = ['min_prefix' => 223, 'max_prefix' => 231];
+		$ranges['WV'] = ['min_prefix' => 232, 'max_prefix' => 236];
+		$ranges['NC'] = ['min_prefix' => 237, 'max_prefix' => 246];
+		$ranges['SC'] = ['min_prefix' => 247, 'max_prefix' => 251];
+		$ranges['GA'] = ['min_prefix' => 252, 'max_prefix' => 260];
+		$ranges['FL'] = ['min_prefix' => 263, 'max_prefix' => 267];
+		$ranges['OH'] = ['min_prefix' => 268, 'max_prefix' => 302];
+		$ranges['IN'] = ['min_prefix' => 303, 'max_prefix' => 317];
+		$ranges['IL'] = ['min_prefix' => 318, 'max_prefix' => 361];
+		$ranges['MI'] = ['min_prefix' => 362, 'max_prefix' => 386];
+		$ranges['WI'] = ['min_prefix' => 387, 'max_prefix' => 399];
+		$ranges['KY'] = ['min_prefix' => 400, 'max_prefix' => 407];
+		$ranges['TN'] = ['min_prefix' => 408, 'max_prefix' => 415];
+		$ranges['AL'] = ['min_prefix' => 416, 'max_prefix' => 424];
+		$ranges['MI'] = ['min_prefix' => 425, 'max_prefix' => 428];
+		$ranges['AR'] = ['min_prefix' => 429, 'max_prefix' => 432];
+		$ranges['LA'] = ['min_prefix' => 433, 'max_prefix' => 439];
+		$ranges['OK'] = ['min_prefix' => 440, 'max_prefix' => 448];
+		$ranges['TX'] = ['min_prefix' => 449, 'max_prefix' => 467];
+		$ranges['MN'] = ['min_prefix' => 468, 'max_prefix' => 477];
+		$ranges['IA'] = ['min_prefix' => 478, 'max_prefix' => 485];
+		$ranges['MO'] = ['min_prefix' => 486, 'max_prefix' => 500];
+		$ranges['ND'] = ['min_prefix' => 501, 'max_prefix' => 502];
+		$ranges['SD'] = ['min_prefix' => 503, 'max_prefix' => 504];
+		$ranges['NE'] = ['min_prefix' => 505, 'max_prefix' => 508];
+		$ranges['KS'] = ['min_prefix' => 509, 'max_prefix' => 515];
+		$ranges['MT'] = ['min_prefix' => 516, 'max_prefix' => 517];
+		$ranges['ID'] = ['min_prefix' => 518, 'max_prefix' => 519];
+		$ranges['WY'] = ['min_prefix' => 520, 'max_prefix' => 520];
+		$ranges['CO'] = ['min_prefix' => 521, 'max_prefix' => 524];
+		$ranges['NM'] = ['min_prefix' => 525, 'max_prefix' => 525];
+		$ranges['AZ'] = ['min_prefix' => 526, 'max_prefix' => 527];
+		$ranges['UT'] = ['min_prefix' => 528, 'max_prefix' => 529];
+		$ranges['NV'] = ['min_prefix' => 530, 'max_prefix' => 530];
+		$ranges['WA'] = ['min_prefix' => 531, 'max_prefix' => 539];
+		$ranges['OR'] = ['min_prefix' => 540, 'max_prefix' => 544];
+		$ranges['CA'] = ['min_prefix' => 545, 'max_prefix' => 573];
+		$ranges['AK'] = ['min_prefix' => 574, 'max_prefix' => 574];
+		$ranges['DC'] = ['min_prefix' => 577, 'max_prefix' => 579];
+
+		if (!array_key_exists($state_code, $ranges)) {
+			// We don't have a range for this state. Choose a state at random from the list.
+			$state_code = $this->fromArray(array_keys($ranges));
+		}
+		
+		$prefix = rand($ranges[$state_code]['min_prefix'], $ranges[$state_code]['min_prefix']);
+		$suffix = rand(100000, 999999);
+		return str_pad($prefix, 3, '0', STR_PAD_LEFT) . str_pad($suffix, 6, '0', STR_PAD_LEFT);
 	}
 
 	/**
@@ -410,7 +474,7 @@ class Generator
 	{
 		$suffixes = ['Corporation', 'Company', 'Company, Limited', 'Computer Repair', 'Incorporated', 'and Sons', 'Group', 'Group, PLC', 'Furniture', 'Flowers', 'Sales', 'Systems', 'Tire', 'Auto', 'Plumbing', 'Roofing', 'Realty', 'Foods', 'Books'];
 		
-		if (!$base_name) {
+		if (empty($base_name)) {
 			$base_name = $this->getLastName();
 		}
 
@@ -647,7 +711,7 @@ class Generator
 		$person->phone->mobile	= $this->getPhone($state_code, $person->address->zip);
 		$person->phone->work	= $this->getPhone($state_code, $person->address->zip);
 
-		$person->ssn	= $this->getSsn();
+		$person->ssn	= $this->getSsn($state_code);
 		$person->dln	= $this->getDln($state_code);
 
 		$person->dob	= $this->getBirthDate();
