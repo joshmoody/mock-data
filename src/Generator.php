@@ -307,7 +307,7 @@ class Generator
 	 */
 	public function getGender()
 	{
-		return $this->fromArray(['F','M']);
+		return $this->fromArray(['F', 'M']);
 	}
 
 	/**
@@ -698,7 +698,7 @@ class Generator
 		}
 
 		# Primary address
-		$person->address = $this->getAddress($state_code); // Returns object with line_1, line_2, city, zip, county, state->code, and state->name properties.
+		$person->address = $this->getAddress($state_code);
 		
 		# Secondary Address.  Mailing Address?	Use same zip code and primary address
 		$person->address2 = $this->getAddress($state_code, $person->address->zip);

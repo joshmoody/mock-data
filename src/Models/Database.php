@@ -50,8 +50,7 @@ class Database
 	{
 		$opts = null;
 		
-		if (!empty($string))
-		{
+		if (!empty($string)) {
 			$dsn = (object) DsnParser::parseUrl($string)->toArray();
 			
 			$opts = [
