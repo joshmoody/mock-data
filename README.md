@@ -1,6 +1,8 @@
 # Mock Data Generator
 Generate realistic test data.
 
+[![Build Status](https://travis-ci.org/joshmoody/mock-data.png?branch=master)](https://travis-ci.org/joshmoody/mock-data)
+
 ## Why?
 I work with very data-intensive applications. Sometimes I need large quantities of test data for building test cases and seeding web services, databases, online forms, etc.  I wrote this library to assist with this.
 
