@@ -59,7 +59,7 @@ class Generator
 	 * @param mixed $desired_length Will be random length if not specified.
 	 * @return string
 	 */
-	public function getString($type = 'letter', $desired_length = false)
+	public function getString($type = 'letter', $desired_length = null)
 	{
 		if (empty($desired_length)) {
 			$desired_length = $this->getInteger(1, 50);
@@ -198,12 +198,12 @@ class Generator
 	/**
 	 * Returns a DLN object that contains a driver license number, state, and expiration
 	 */
-	public function getDln($state_code = false, $min = 900000001, $max = 999999999)
+	public function getDln($state_code = null, $min = 900000001, $max = 999999999)
 	{
 		$dln = new stdclass();
 
 		$dln->number		= rand($min, $max);
-		$dln->state			= $state_code ? $this->getState($state_code) : $this->getState();
+		$dln->state			= !empty($state_code) ? $state_code : $this->getState();
 		$dln->expiration	= $this->getExpiration();
 		
 		return $dln;
@@ -393,10 +393,10 @@ class Generator
 	 *
 	 * @return array(code, description)
 	 */
-	public function getState($state_code = false)
+	public function getState($state_code = null)
 	{
 		
-		if ($state_code) {
+		if (!empty($state_code)) {
 			$res = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first();
 		} else {
 			$res = Zipcode::orderByRaw(Database::random())->first();
@@ -411,10 +411,10 @@ class Generator
 	/**
 	 * Return a zip code
 	 */
-	public function getZip($state_code = false)
+	public function getZip($state_code = null)
 	{
 	
-		if ($state_code) {
+		if (!empty($state_code)) {
 			return Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first()->zip;
 		} else {
 			return Zipcode::orderByRaw(Database::random())->first()->zip;
@@ -433,15 +433,15 @@ class Generator
 	/**
 	 * Return object with full street info
 	 */
-	public function getAddress($state_code = false, $zip = false)
+	public function getAddress($state_code = null, $zip = null)
 	{
 		$address = new stdclass();
 
-		if ($zip && $state_code) {
+		if (!empty($zip) && !empty($state_code)) {
 			$result = Zipcode::where('zip', $zip)->where('state_code', $state_code)->orderByRaw(Database::random())->first();
-		} elseif ($zip) {
+		} elseif (!empty($zip)) {
 			$result = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first();
-		} elseif ($state_code) {
+		} elseif (!empty($state_code)) {
 			$result = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first();
 		} else {
 			$result = Zipcode::orderByRaw(Database::random())->first();
@@ -484,13 +484,13 @@ class Generator
 	/**
 	 * Return a phone number
 	 */
-	public function getPhone($state_code = false, $zip = false, $include_toll_free = false)
+	public function getPhone($state_code = null, $zip = null, $include_toll_free = false)
 	{
-		if ($zip) {
+		if (!empty($zip)) {
 			$areacodes = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first()->area_codes;
 		} else {
 			// Get a random state if state not provided
-			$state_code = $state_code ? $state_code : $this->getState()->code;
+			$state_code = !empty($state_code) ? $state_code : $this->getState()->code;
 			
 			// Get area codes appropriate for this state
 			$areacodes = Zipcode::where('state_code', $state_code)->orderByRaw(Database::random())->first()->area_codes;
@@ -526,11 +526,11 @@ class Generator
 		return strtolower($domain) . $this->fromArray($tld);
 	}
 	
-	public function getUrl($domain = false)
+	public function getUrl($domain = null)
 	{
 		$protocol = ['https://www.', 'http://www.', 'http://', 'https://'];
 		
-		$domain = $domain ? $domain : $this->getDomain();
+		$domain = !empty($domain) ? $domain : $this->getDomain();
 		
 		return $this->fromArray($protocol)	. $domain;
 	}
@@ -590,8 +590,8 @@ class Generator
 	 * Generate internet information.  Domain, Email, URL, IP Address, Username
 	 * 
 	 * @access public
-	 * @param mixed $person_name (default: false)
-	 * @param mixed $company (default: false)
+	 * @param mixed $person_name (default: null)
+	 * @param mixed $company (default: null)
 	 * @return Internet object
 	 */
 	public function getInternet($person_name = null, $company = null)
@@ -676,12 +676,12 @@ class Generator
 	 * Generate a Person object with all relevent attributes.
 	 * 
 	 * @access public
-	 * @param mixed $state_code (default: false)
+	 * @param mixed $state_code (default: null)
 	 * @return void
 	 */
-	public function getPerson($state_code = false)
+	public function getPerson($state_code = null)
 	{
-		$state_code = $state_code ? $state_code : $this->getState()->code;
+		$state_code = !empty($state_code) ? $state_code : $this->getState()->code;
 		
 		$person = new stdclass();
 

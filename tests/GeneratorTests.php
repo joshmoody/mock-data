@@ -175,7 +175,13 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('ip', $internet);
 		$this->assertObjectHasAttribute('username', $internet);
 	}
-		
+	
+	public function testGeneratesDomain()
+	{
+		$domain = $this->generator->getDomain();
+		$this->assertTrue(strlen($domain) > 3);
+	}
+	
 	public function testValidPhone()
 	{
 		$phone = $this->generator->getPhone();
