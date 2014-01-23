@@ -178,6 +178,18 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		
 	public function testValidPhone()
 	{
+		$phone = $this->generator->getPhone();
+		$this->assertRegExp($this->phone_regex, $phone);
+	}
+
+	public function testValidPhoneWithState()
+	{
+		$phone = $this->generator->getPhone('AR');
+		$this->assertRegExp($this->phone_regex, $phone);
+	}
+
+	public function testValidPhoneWithStateZip()
+	{
 		$phone = $this->generator->getPhone('AR', '72201');
 		$this->assertRegExp($this->phone_regex, $phone);
 	}

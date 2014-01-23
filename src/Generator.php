@@ -486,9 +486,6 @@ class Generator
 	 */
 	public function getPhone($state_code = false, $zip = false, $include_toll_free = false)
 	{
-
-		$areacodes = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first()->area_codes;
-
 		if ($zip) {
 			$areacodes = Zipcode::where('zip', $zip)->orderByRaw(Database::random())->first()->area_codes;
 		} else {
