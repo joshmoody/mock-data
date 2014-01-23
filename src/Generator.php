@@ -596,6 +596,10 @@ class Generator
 	 */
 	public function getInternet($person_name = null, $company = null)
 	{
+		if (empty($person_name)) {
+			$person_name = $this->getFullName();
+		}
+		
 		$internet = new stdclass();
 		$internet->domain	= $this->getDomain($company);
 		$internet->username	= $this->getUserName($person_name);
