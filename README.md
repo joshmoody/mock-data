@@ -1,7 +1,7 @@
 # Mock Data Generator
 Generate realistic test data.
 
-[![Build Status](https://travis-ci.org/joshmoody/mock-data.png?branch=master)](https://travis-ci.org/joshmoody/mock-data)
+[![Build Status](https://travis-ci.org/joshmoody/mock-data.png?branch=master)](https://travis-ci.org/joshmoody/mock-data) [![Total Downloads](https://poser.pugx.org/joshmoody/mock-data/downloads.png)](https://packagist.org/packages/joshmoody/mock-data) [![Latest Stable Version](https://poser.pugx.org/joshmoody/mock-data/v/stable.png)](https://packagist.org/packages/joshmoody/mock-data)
 
 ## Why?
 I work with very data-intensive applications. Sometimes I need large quantities of test data for building test cases and seeding web services, databases, online forms, etc.  I wrote this library to assist with this.
@@ -30,11 +30,13 @@ This library is designed to create very realistic-looking data.
 		- The prefix and length will match the type of card generated (MasterCard, Visa, etc.)
 
 ## Usage
-	<?php
-	$generator = new joshmoody\Mock\Generator();
-	
-	$person = $generator->getPerson('AR');
-	print_r($person);
+
+``` php
+$generator = new joshmoody\Mock\Generator();
+
+$person = $generator->getPerson('AR');
+print_r($person);
+```
 
 Example output:
 
@@ -136,206 +138,232 @@ Get a full name (first, middle, last, gender).
 
 > Why is gender is included as a property of the name? In the U.S., first and middle names are usually closely associated with gender.
 
-	$name = $generator->getFullName();
+``` php
+$name = $generator->getFullName();
 
-	/*
-	stdClass Object
-	(
-	    [first] => Laurie
-	    [middle] => Joyce
-	    [last] => Wilson
-	    [gender] => F
-	)
-	*/
+/*
+stdClass Object
+(
+    [first] => Laurie
+    [middle] => Joyce
+    [last] => Wilson
+    [gender] => F
+)
+*/
+```
 
 Or get parts of a name:
 
-	$first = $generator->getFirstName('M'); // M=Male, F=Female, null = random.
-	/*
-	string(8) "Clarence"
-	*/
+``` php
+$first = $generator->getFirstName('M'); // M=Male, F=Female, null = random.
+/*
+string(8) "Clarence"
+*/
 
-	$middle = $generator->getMiddleName('M'); // M=Male, F=Female, null = random.
-	/*
-	string(4) "Dale"
-	*/
+$middle = $generator->getMiddleName('M'); // M=Male, F=Female, null = random.
+/*
+string(4) "Dale"
+*/
 
-	$last = $generator->getLastName();
-	/*
-	string(6) "Rogers"
-	*/
-
+$last = $generator->getLastName();
+/*
+string(6) "Rogers"
+*/
+```
 
 ### Addresses
 
 Get a full address with street, city, state, zip
 
-	$address = $generator->getAddress();
+``` php
+$address = $generator->getAddress();
 
-	/*
-	stdClass Object
-	(
-	    [line_1] => 2835 Hamilton Street
-	    [line_2] => 
-	    [city] => Hyndman
-	    [zip] => 15545
-	    [county] => Bedford
-	    [state] => stdClass Object
-	        (
-	            [code] => PA
-	            [name] => Pennsylvania
-	        )
-	
-	)
-	*/
+/*
+stdClass Object
+(
+    [line_1] => 2835 Hamilton Street
+    [line_2] => 
+    [city] => Hyndman
+    [zip] => 15545
+    [county] => Bedford
+    [state] => stdClass Object
+        (
+            [code] => PA
+            [name] => Pennsylvania
+        )
+
+)
+*/
+```
 	
 Or gets parts of an address:
 
-	$street = $generator->getStreet();
-	/*
-	string(15) "2162 9th Street"
-	*/	
-	
-	$apartment = $generator->getApartment();
-	/*
-	string(9) "Apt. 6677"
-	*/
+``` php
+$street = $generator->getStreet();
+/*
+string(15) "2162 9th Street"
+*/	
 
-	$city = $generator->getCity('AR');
-	/*
-	string(8) "Little Rock"
-	*/
+$apartment = $generator->getApartment();
+/*
+string(9) "Apt. 6677"
+*/
 
-	$state = $generator->getState();
-	/*
-	stdClass Object
-	(
-	    [code] => AR
-	    [name] => Arkansas
-	)
-	*/
+$city = $generator->getCity('AR');
+/*
+string(8) "Little Rock"
+*/
 
-	$zip = $generator->getZip('AR');
-	/*
-	string(5) "72201"
-	*/
+$state = $generator->getState();
+/*
+stdClass Object
+(
+    [code] => AR
+    [name] => Arkansas
+)
+*/
+
+$zip = $generator->getZip('AR');
+/*
+string(5) "72201"
+*/
+```
 
 ### Phone Numbers
 
-	$phone = $generator->getPhone([$state_code = false, $zip = false, $include_toll_free = false])
-	/*
-	string(12) "908-519-1084"
-	*/
+```php
+$phone = $generator->getPhone([$state_code = false, $zip = false, $include_toll_free = false]);
+/*
+string(12) "908-519-1084"
+*/
+```
 
 ### Internet
 
-	$internet = $generator->getInternet([$person_name = null, $company = null]);
-	/*
-	stdClass Object
-	(
-	    [domain] => martinez.us
-	    [username] => swilliams
-	    [email] => stacey.williams@gmail.com
-	    [url] => https://martinez.us
-	    [ip] => 157.116.10.90
-	)
-	*/
-	
-	$domain = $generator->getDomain($domain = null);
-	/*
-	string(8) "dean.com"
-	*/
+``` php
+$internet = $generator->getInternet([$person_name = null, $company = null]);
+/*
+stdClass Object
+(
+    [domain] => martinez.us
+    [username] => swilliams
+    [email] => stacey.williams@gmail.com
+    [url] => https://martinez.us
+    [ip] => 157.116.10.90
+)
+*/
 
-	$username = $generator->getUsername([$person_name = null]);
-	/*
-	string(14) "pedro.thompson"
-	*/
+$domain = $generator->getDomain($domain = null);
+/*
+string(8) "dean.com"
+*/
 
-	$email = $generator->getEmail([$person_name = null, $domain = null]);
-	/*
-	string(20) "fred.harrison@me.com"
-	*/
+$username = $generator->getUsername([$person_name = null]);
+/*
+string(14) "pedro.thompson"
+*/
 
-	$url = $generator->getUrl();
-	/*
-	string(19) "http://hernandez.us"
-	*/
+$email = $generator->getEmail([$person_name = null, $domain = null]);
+/*
+string(20) "fred.harrison@me.com"
+*/
 
-	$ip = $generator->getIp();
-	/*
-	string(13) "101.114.68.26"
-	*/
+$url = $generator->getUrl();
+/*
+string(19) "http://hernandez.us"
+*/
+
+$ip = $generator->getIp();
+/*
+string(13) "101.114.68.26"
+*/
+```
 
 ## Random Data
 In addition to realistic data generation, you can also use this library to easily pick a random value from an array.
 
-	<?php
-	$color = $generator->fromArray(['Red' , 'White', 'Blue']);
-	/*
-	string(3) "Red"
-	*/
+``` php
+$color = $generator->fromArray(['Red' , 'White', 'Blue']);
+/*
+string(3) "Red"
+*/
+```
 	
 Or get a boolean.
 
-	<?php
-	$bool = $generator->getBool(); // Returns bool(true) or bool(false);
-	/*
-	bool(false)
-	*/
+``` php
+$bool = $generator->getBool(); // Returns bool(true) or bool(false);
+/*
+bool(false)
+*/
+```
 
 Or get a string representation of a boolean. You define the return values for true/false
 
-	<?php
-	$yes_no = $generator->getBool('Yes', 'No'); // Returns string(Yes) or string(No)
-	/*
-	string(3) "Yes"
-	*/
+``` php
+$yes_no = $generator->getBool('Yes', 'No'); // Returns string(Yes) or string(No)
+/*
+string(3) "Yes"
+*/
 
-	$aye_nay = $generator->getBool('Aye', 'Nay'); // returns string(Aye) or string (Nay)
-	/*
-	 string(3) "Nay"
-	*/
+$aye_nay = $generator->getBool('Aye', 'Nay'); // returns string(Aye) or string (Nay)
+/*
+ string(3) "Nay"
+*/
+```
 
 ## Requirements
 - MySQL or SQlite
 - PHP >= 5.4 with MySQL _or_ SQlite PDO extension.
 
 ## Installation
+Installation of this package is easy with Composer. If you aren't familiar with the Composer Dependency Manager for PHP, [you should read this first](https://getcomposer.org/doc/00-intro.md).
 
-Installation is easy with Composer. If you aren't familiar with the Composer Dependency Manager for PHP, [you should read this first](https://getcomposer.org/doc/00-intro.md).
-	
-	$ composer require --dev joshmoody/mock-data dev-master
+If you don't already have [Composer](https://getcomposer.org) installed (either globally or in your project), you can install it like this:
 
-https://packagist.org/packages/joshmoody/mock-data
+	$ curl -sS https://getcomposer.org/installer | php
 
-**You can use either SQLite or MySQL for storing the base mock data elements.**
+Create a file named composer.json somewhere in your project with the following content:
+
+``` json
+{
+    "require": {
+        "joshmoody/mock-data": "dev-master"
+    }
+}
+```
 
 ## Zero Configuration Instructions - SQLite
 The package ships with a sqlite database containing all the data needed for generating random records.
 
 To use the default sqlite database, call the constructor without passing an options array.
 	
-	<?php
-	$generator = new joshmoody\Mock\Generator();
+``` php
+$generator = new joshmoody\Mock\Generator();
+```
 
 ## Easy Configuration Instructions - MySQL
 Run the load script in bin/load.php and pass a dsn string (eg mysql://username:password@host/dbname) as the first parameter to the script.
 
-	$ php bin/load.php mysql://root:root@localhost/mock
+``` bash
+$ php bin/load.php mysql://root:root@localhost/mock
+```
 
 > NOTE: The database must already exist. The script will create the tables in that database.
 
 Once the script has set up the database tables, you can pass in your dsn string when calling the constructor.
 
-	<?php
-	$generator = new joshmoody\Mock\Generator(['dsn' => 'mysql://root:root@localhost/mock']);
+``` php
+$generator = new joshmoody\Mock\Generator(['dsn' => 'mysql://root:root@localhost/mock']);
+```
 
 ## Reloading Data
-You can use the load script above to regenerate the sqlite database at any time. Run it the same as the MySQL Instructions above, but without any parameters.
+You can use the load script above to regenerate the sqlite database at any time. Run it the same as the MySQL
+Instructions above, but without any parameters. This may be useful if modifying the source data to better fit your needs.
 
-	$ php bin/load.php
-
-This may be useful if modifying the source data to better fit your needs.
+``` bash
+$ php bin/load.php
+```
 
 ## Acknowledgements
 
