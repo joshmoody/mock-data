@@ -1,29 +1,29 @@
 {
-    "name": "joshmoody/mock-data",
-    "description": "Generate realistic test data.",
-    "homepage": "https://github.com/joshmoody/mock-data",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Josh Moody",
-            "email": "jgmoody@gmail.com"
-        }
-    ],
+	"name": "joshmoody/mock-data",
+	"description": "Generate realistic test data.",
+	"homepage": "https://github.com/joshmoody/mock-data",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Josh Moody",
+			"email": "jgmoody@gmail.com"
+		}
+	],
 	"autoload":{
 		"psr-4":{
 			"joshmoody\\Mock\\Tests\\": "tests/",
 			"joshmoody\\Mock\\": "src/"
 		}
 	},
-	
-    "require": {
-    	"php": ">= 5.4",
+
+	"require": {
+		"php": ">= 5.4",
 		"illuminate/database": "*",
 		"prelude/prelude-dsn": "*"
-    },
+	},
 
-    "require-dev": {
+	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
-        "squizlabs/php_codesniffer": "1.*"
-    }
+		"squizlabs/php_codesniffer": "1.*"
+	}
 }
