@@ -9,4 +9,4 @@ if (!file_exists(__DIR__ . '/composer.lock')) {
 }
 
 // Include the composer autoloader
-$autoloader = require './vendor/autoload.php';
+require './vendor/autoload.php';
