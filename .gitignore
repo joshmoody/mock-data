@@ -4,3 +4,4 @@
 /composer.lock
 /data/*.txt
 /data/*.csv
+/tests/coverage-report

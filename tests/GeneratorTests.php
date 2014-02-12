@@ -57,6 +57,12 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertRegExp($this->ssn_regex, (string) $value);
 	}
 
+	public function testValidSsnForUnknownState()
+	{
+		$value = $this->generator->getSsn('Foo');
+		$this->assertRegExp($this->ssn_regex, (string) $value);
+	}
+	
 	public function testValidDln()
 	{
 		$value = $this->generator->getDln();
@@ -154,6 +160,12 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('M', $name->gender);
 	}
 	
+	public function testGeneratesFirstNameNoGender()
+	{
+		$name = $this->generator->getFirstName();
+		$this->assertInternalType('string', $name);
+	}
+	
 	public function testGeneratesAddress()
 	{
 		$address = $this->generator->getAddress();
@@ -212,9 +224,33 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertRegExp('/^[a-zA-Z]+$/', $value);
 	}
 
+	public function testValidStringNumbersOnly()
+	{
+		$value = $this->generator->getString('number');
+		$this->assertRegExp('/^[0-9]+$/', $value);
+	}
+	
 	public function testValidStringLength()
 	{
 		$value = $this->generator->getString(null, 5);
 		$this->assertEquals(5, strlen($value));
+	}
+	
+	public function testFromArrayNull()
+	{
+		$value = $this->generator->fromArray(null);
+		$this->assertEquals(null, $value);
+	}
+	
+	public function testGetDateNoMinYear()
+	{
+		$value = $this->generator->getDate(['max_year' => date('Y')], 'Y');
+		$this->assertGreaterThanOrEqual(date('Y') - 2, $value);
+	}
+
+	public function testGetDateNoMaxYear()
+	{
+		$value = $this->generator->getDate(['min_year' => date('Y')], 'Y');
+		$this->assertLessThanOrEqual(date('Y'), $value);
 	}
 }

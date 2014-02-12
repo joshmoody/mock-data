@@ -108,10 +108,10 @@ class Generator
 	 */
 	public function fromArray($array = [])
 	{
-		if (count($array) > 0) {
+		if (is_array($array) && count($array) > 0) {
 			return $array[rand(0, count($array)-1)];
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
