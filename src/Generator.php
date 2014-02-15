@@ -31,7 +31,13 @@ class Generator
 	 */
 	public function getFloat($min = 0, $max = 10000, $precision = 2)
 	{
-		$num = rand($min, $max) . '.' . str_pad(rand(1, 9999), $precision, '0', STR_PAD_LEFT);
+		$num = rand($min, $max) . '.' . $this->getString('number', $precision);
+
+		if ($num > $max) {
+			// In case adding the additional decimal points makes us exceed the max.
+			$num = $max;
+		}
+		
 		return round($num, $precision);
 	}
 	

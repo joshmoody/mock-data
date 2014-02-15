@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="vendor/autoload.php">
-
+<phpunit backupGlobals="false"
+		backupStaticAttributes="false"
+		bootstrap="vendor/autoload.php"
+		colors="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		processIsolation="false"
+		stopOnFailure="false"
+		syntaxCheck="true">
 	<testsuites>
 		<testsuite name="Mock Data Generator Test Suite">
 			<directory suffix="Tests.php">./tests</directory>

@@ -98,9 +98,12 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		
 	public function testValidFloatRange()
 	{
-		$min = 100;
-		$max = 200;
-		$value = $this->generator->getFloat($min, $max);
+		$min = 1;
+		$max = 5;
+		$precision = 6;
+		
+		$value = $this->generator->getFloat($min, $max, $precision);
+		
 		$this->assertTrue($value >= $min && $value <= $max, 'Float in defined range');
 	}
 
