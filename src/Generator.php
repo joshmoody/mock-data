@@ -28,6 +28,11 @@ class Generator
 
 	/**
 	 * Generate a float number between $min and $max, with precision $precision
+	 *
+	 * @param int $min
+	 * @param int $max
+	 * @param int $precision
+	 * @return float
 	 */
 	public function getFloat($min = 0, $max = 10000, $precision = 2)
 	{
@@ -40,9 +45,13 @@ class Generator
 		
 		return round($num, $precision);
 	}
-	
+
 	/**
 	 * Generate a random number between $min and $max
+	 *
+	 * @param int $min
+	 * @param int $max
+	 * @return int
 	 */
 	public function getInteger($min = 0, $max = 10000)
 	{
@@ -51,6 +60,8 @@ class Generator
 
 	/**
 	 * Generate a unique sha1 hash.
+	 *
+	 * @return string
 	 */
 	public function getUniqueHash()
 	{
@@ -86,9 +97,11 @@ class Generator
 		
 		return substr($result, 0, $desired_length);
 	}
-	
+
 	/**
 	 * Generate a GUID.
+	 *
+	 * @return string
 	 */
 	public function getGuid()
 	{
@@ -107,10 +120,12 @@ class Generator
 						mt_rand(0, 65535) // 48 bits for "node"
 		);
 	}
-	
 
 	/**
 	 * Return a random value from an array
+	 *
+	 * @param array $array
+	 * @return mixed
 	 */
 	public function fromArray($array = [])
 	{
@@ -143,9 +158,9 @@ class Generator
 
 	/**
 	 * Generate a random date.
-	 *
 	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
 	 * @param string $format date() format for return value.  Default: Y-m-d
+	 * @return string formatted date string.
 	 */
 	public function getDate($params = [], $format = 'Y-m-d')
 	{
@@ -186,7 +201,11 @@ class Generator
 	}
 	
 	/**
-	 * Generate a reasonable birthdate.	 Default Age: 20-80 years.
+	 * Generate a reasonable birth date.	 Default Age: 20-80 years.
+	 *
+	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
+	 * @param string $format date() format for return value.  Default: Y-m-d
+	 * @return string formatted date string.
 	 */
 	public function getBirthDate($params = [], $format = 'Y-m-d')
 	{
@@ -195,6 +214,12 @@ class Generator
 		return $this->getDate($params, $format);
 	}
 
+	/**
+	 * Get a future date. Suitable for DLN / CC Expiration
+	 *
+	 * @param string $format
+	 * @return string formatted date string.
+	 */
 	public function getExpiration($format = 'm/Y')
 	{
 		$date_params = ['min_year' => date('Y'), 'max_year' => date('Y') + 3];
@@ -203,6 +228,11 @@ class Generator
 	
 	/**
 	 * Returns a DLN object that contains a driver license number, state, and expiration
+	 *
+	 * @param null $state_code
+	 * @param int $min
+	 * @param int $max
+	 * @return StdClass
 	 */
 	public function getDln($state_code = null, $min = 900000001, $max = 999999999)
 	{
@@ -218,6 +248,9 @@ class Generator
 	/**
 	 * Generate a 9 digit number that could be an SSN for a given state.
 	 * SSN Prefixes from http://socialsecuritynumerology.com/prefixes.php for
+	 *
+	 * @param null $state_code
+	 * @return string
 	 */
 	public function getSsn($state_code = null)
 	{
@@ -310,6 +343,8 @@ class Generator
 	
 	/**
 	 * Returns Gender (M/F) at random.
+	 *
+	 * @return string $gender
 	 */
 	public function getGender()
 	{
@@ -324,6 +359,7 @@ class Generator
 	 * Pool is only 250 most frequent last names.  Increase by passing a higher value for $max
 	 *
 	 * @param int $max How large should our pool of names be? Default: 250
+	 * @return string Last Name
 	 */
 	public function getLastName($max = 250)
 	{
@@ -332,6 +368,9 @@ class Generator
 	
 	/**
 	 * Alias for get_firstname()
+	 *
+	 * @param string $gender Do you want a male or female name? (M/F).	If null, selects a gender at random.
+	 * @return string
 	 */
 	public function getMiddleName($gender = null)
 	{
@@ -340,6 +379,7 @@ class Generator
 
 	/**
 	 * Returns a random character, A-Z
+	 * @return string
 	 */
 	public function getLetter()
 	{
@@ -370,6 +410,8 @@ class Generator
 	
 	/**
 	 * Return a street name
+	 *
+	 * @return string
 	 */
 	public function getStreet()
 	{
@@ -379,7 +421,12 @@ class Generator
 
 		return $number . ' ' . $street_name;
 	}
-	
+
+	/**
+	 * Get an apartment number.
+	 *
+	 * @return string
+	 */
 	public function getApartment()
 	{
 		$types = ['Apt.', 'Apartment', 'Ste.', 'Suite', 'Box'];
@@ -393,11 +440,12 @@ class Generator
 		$type = $this->fromArray($types);
 		return $type . ' ' . $extra;
 	}
-	
+
 	/**
 	 * Return a state
 	 *
-	 * @return array(code, description)
+	 * @param null $state_code
+	 * @return StdClass
 	 */
 	public function getState($state_code = null)
 	{
@@ -413,9 +461,10 @@ class Generator
 		$State->name = $res->state;
 		return $State;
 	}
-	
+
 	/**
-	 * Return a zip code
+	 * @param null $state_code
+	 * @return mixed
 	 */
 	public function getZip($state_code = null)
 	{
@@ -427,6 +476,10 @@ class Generator
 		}
 	}
 
+	/**
+	 * @param bool $state_code
+	 * @return mixed
+	 */
 	public function getCity($state_code = false)
 	{
 		if ($state_code) {
@@ -435,9 +488,13 @@ class Generator
 			return Zipcode::orderByRaw(Database::random())->first()->city;
 		}
 	}
-	
+
 	/**
 	 * Return object with full street info
+	 *
+	 * @param null $state_code
+	 * @param null $zip
+	 * @return StdClass
 	 */
 	public function getAddress($state_code = null, $zip = null)
 	{
@@ -475,6 +532,9 @@ class Generator
 	/**
 	 * Return a Company Name.  Uses a random last name plus a suffix that looks like a company name.
 	 * You can optionally pass a name to serve as the prefix
+	 *
+	 * @param null $base_name
+	 * @return string
 	 */
 	public function getCompanyName($base_name = null)
 	{
@@ -486,9 +546,14 @@ class Generator
 
 		return $base_name . ' ' . $this->fromArray($suffixes);
 	}
-	
+
 	/**
 	 * Return a phone number
+	 *
+	 * @param null $state_code
+	 * @param null $zip
+	 * @param bool $include_toll_free
+	 * @return string
 	 */
 	public function getPhone($state_code = null, $zip = null, $include_toll_free = false)
 	{
@@ -521,7 +586,11 @@ class Generator
 		
 		return $areacode . '-' . $prefix . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
 	}
-	
+
+	/**
+	 * @param null $base
+	 * @return string
+	 */
 	public function getDomain($base = null)
 	{
 		$domain = !empty($base) ? $base : $this->getLastName();
@@ -531,7 +600,11 @@ class Generator
 		$tld = ['.com', '.net', '.us', '.biz'];
 		return strtolower($domain) . $this->fromArray($tld);
 	}
-	
+
+	/**
+	 * @param null $domain
+	 * @return string
+	 */
 	public function getUrl($domain = null)
 	{
 		$protocol = ['https://www.', 'http://www.', 'http://', 'https://'];
@@ -540,7 +613,11 @@ class Generator
 		
 		return $this->fromArray($protocol)	. $domain;
 	}
-	
+
+	/**
+	 * Get something that looks like an IP Address
+	 * @return string
+	 */
 	public function getIp()
 	{
 		$parts = [];
@@ -551,7 +628,11 @@ class Generator
 		
 		return join('.', $parts);
 	}
-	
+
+	/**
+	 * @param null $person_name
+	 * @return string
+	 */
 	public function getUsername($person_name = null)
 	{
 		if (empty($person_name)) {
@@ -574,6 +655,10 @@ class Generator
 	/**
 	 * Return an email address.
 	 * You can optionally pass a name to use in the address
+	 *
+	 * @param null $person_name
+	 * @param null $domain
+	 * @return string
 	 */
 	public function getEmail($person_name = null, $domain = null)
 	{
@@ -598,7 +683,7 @@ class Generator
 	 * @access public
 	 * @param mixed $person_name (default: null)
 	 * @param mixed $company (default: null)
-	 * @return Internet object
+	 * @return StdClass
 	 */
 	public function getInternet($person_name = null, $company = null)
 	{
@@ -621,7 +706,7 @@ class Generator
 	 * 
 	 * @access public
 	 * @param mixed $weighted (default: true) - Make it more likely to return MasterCard or Visa
-	 * @return CreditCard Object.  
+	 * @return StdClass
 	 */
 	public function getCreditCard($weighted = true)
 	{
@@ -663,7 +748,7 @@ class Generator
 	 * Generate bank account information.
 	 * 
 	 * @access public
-	 * @return BankAccount object
+	 * @return StdClass
 	 */
 	public function getBank()
 	{
@@ -679,11 +764,11 @@ class Generator
 	}
 	
 	/**
-	 * Generate a Person object with all relevent attributes.
+	 * Generate a Person object with all relevant attributes.
 	 * 
 	 * @access public
 	 * @param mixed $state_code (default: null)
-	 * @return void
+	 * @return object
 	 */
 	public function getPerson($state_code = null)
 	{
@@ -732,8 +817,10 @@ class Generator
 
 	/**
 	 * I've adapted a credit card / routing number generator to meet my needs here. Original copyright below.
-	 *
 	 * Numbers created here will pass the Luhn Mod-10 test.
+	 *
+	 * @param string $type
+	 * @return string
 	 */
 	public function getBankNumber($type = 'Visa')
 	{
@@ -796,8 +883,9 @@ class Generator
 	}
 		
 	/**
-	 * 'prefix' is the start of the CC number as a string, any number of digits.
-	 * 'length' is the length of the CC number to generate. Typically 13 or 16
+	 * @param array $prefixlist The start of the CC number as a string, any number of digits.
+	 * @param $length Length of the CC number to generate. Typically 13 or 16
+	 * @return string
 	 */
 	protected function completedBankNumber($prefixlist, $length)
 	{
