@@ -40,95 +40,92 @@ print_r($person);
 
 Example output:
 
-	stdClass Object
-	(
-	    [guid] => 83e55aea-0313-9c34-557c-642483c526d9
-	    [unique_hash] => 6a396b5876dd1557f237a1871c31ba1244b10506
-	    [name] => stdClass Object
-	        (
-	            [first] => Darren
-	            [middle] => Jay
-	            [last] => James
-	            [gender] => M
-	        )
-	
-	    [company] => Mason Furniture
-	    [address] => stdClass Object
-	        (
-	            [line_1] => 7353 Main Street
-	            [line_2] => 
-	            [city] => Farmington
-	            [zip] => 72730
-	            [county] => Washington
-	            [state] => stdClass Object
-	                (
-	                    [code] => AR
-	                    [name] => Arkansas
-	                )
-	
-	        )
-	
-	    [address2] => stdClass Object
-	        (
-	            [line_1] => 6817 Devon Court
-	            [line_2] => Ste. 6337
-	            [city] => Farmington
-	            [zip] => 72730
-	            [county] => Washington
-	            [state] => stdClass Object
-	                (
-	                    [code] => AR
-	                    [name] => Arkansas
-	                )
-	
-	        )
-	
-	    [internet] => stdClass Object
-	        (
-	            [domain] => masonfurniture.biz
-	            [username] => darrenjames
-	            [email] => darren.james@gmail.com
-	            [url] => http://masonfurniture.biz
-	            [ip] => 164.173.80.196
-	        )
-	
-	    [phone] => stdClass Object
-	        (
-	            [home] => 479-341-2117
-	            [mobile] => 479-308-7757
-	            [work] => 479-146-6536
-	        )
-	
-	    [ssn] => 429326237
-	    [dln] => stdClass Object
-	        (
-	            [number] => 969767857
-	            [state] => stdClass Object
-	                (
-	                    [code] => AR
-	                    [name] => Arkansas
-	                )
-	
-	            [expiration] => 08/2015
-	        )
-	
-	    [dob] => 1939-05-26
-	    [credit_card] => stdClass Object
-	        (
-	            [type] => Visa
-	            [number] => 4916441193760049
-	            [expiration] => 04/2015
-	        )
-	
-	    [bank_account] => stdClass Object
-	        (
-	            [type] => Checking
-	            [name] => Regions
-	            [account] => 396457523
-	            [routing] => 076098730
-	        )
-	
-	)
+```
+joshmoody\Mock\Entities\Person Object
+(
+    [guid] => d36fb161-39a8-ca74-9564-e5f903b6bad1
+    [unique_hash] => f7382ef385fccc215ac1f4cd3f975ad63898556f
+    [name] => joshmoody\Mock\Entities\FullName Object
+        (
+            [first] => Leonard
+            [middle] => Gordon
+            [last] => Roberts
+            [gender] => M
+        )
+
+    [company] => Martin Auto
+    [address] => joshmoody\Mock\Entities\Address Object
+        (
+            [line_1] => 6496 6th Street
+            [line_2] =>
+            [city] => Fort Smith
+            [zip] => 72903
+            [county] => Sebastian
+            [state] => joshmoody\Mock\Entities\State Object
+                (
+                    [code] => AR
+                    [name] => Arkansas
+                )
+
+        )
+
+    [address2] => joshmoody\Mock\Entities\Address Object
+        (
+            [line_1] => 4126 Berkshire Drive
+            [line_2] => Suite 3352
+            [city] => Fort Smith
+            [zip] => 72903
+            [county] => Sebastian
+            [state] => joshmoody\Mock\Entities\State Object
+                (
+                    [code] => AR
+                    [name] => Arkansas
+                )
+
+        )
+
+    [internet] => joshmoody\Mock\Entities\Internet Object
+        (
+            [domain] => martinauto.com
+            [username] => lroberts
+            [email] => leonard@yahoo.com
+            [url] => http://www.martinauto.com
+            [ip] => 201.254.71.153
+        )
+
+    [phone] => stdClass Object
+        (
+            [home] => 479-123-0338
+            [mobile] => 479-761-9748
+            [work] => 479-551-3998
+        )
+
+    [ssn] => 429836996
+    [dln] => joshmoody\Mock\Entities\DriverLicense Object
+        (
+            [number] => 927684836
+            [state] => AR
+            [expiration] => 06/2017
+        )
+
+    [credit_card] => joshmoody\Mock\Entities\CreditCard Object
+        (
+            [type] => American Express
+            [number] => 347716769562193
+            [expiration] => 03/2015
+        )
+
+    [bank_account] => joshmoody\Mock\Entities\BankAccount Object
+        (
+            [type] => Checking
+            [name] => First National
+            [account] => 935060029
+            [routing] => 075938878
+        )
+
+    [dob] => 1968-08-12
+)
+```
 
 Each type of data element above may be generated independently.
 
@@ -142,7 +139,7 @@ Get a full name (first, middle, last, gender).
 $name = $generator->getFullName();
 
 /*
-stdClass Object
+joshmoody\Mock\Entities\FullName Object
 (
     [first] => Laurie
     [middle] => Joyce
@@ -179,14 +176,14 @@ Get a full address with street, city, state, zip
 $address = $generator->getAddress();
 
 /*
-stdClass Object
+joshmoody\Mock\Entities\Address Object
 (
     [line_1] => 2835 Hamilton Street
     [line_2] => 
     [city] => Hyndman
     [zip] => 15545
     [county] => Bedford
-    [state] => stdClass Object
+    [state] => joshmoody\Mock\Entities\State Object
         (
             [code] => PA
             [name] => Pennsylvania
@@ -216,7 +213,7 @@ string(8) "Little Rock"
 
 $state = $generator->getState();
 /*
-stdClass Object
+joshmoody\Mock\Entities\State Object
 (
     [code] => AR
     [name] => Arkansas
@@ -243,7 +240,7 @@ string(12) "908-519-1084"
 ``` php
 $internet = $generator->getInternet([$person_name = null, $company = null]);
 /*
-stdClass Object
+joshmoody\Mock\Entities\Internet Object
 (
     [domain] => martinez.us
     [username] => swilliams
