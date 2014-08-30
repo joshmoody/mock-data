@@ -16,4 +16,3 @@ script:
 matrix:
   allow_failures:
     - php: hhvm
-    - php: 5.6
