@@ -12,7 +12,8 @@
 	"autoload":{
 		"psr-4":{
 			"joshmoody\\Mock\\Tests\\": "tests/",
-			"joshmoody\\Mock\\": "src/"
+			"joshmoody\\Mock\\": "src/",
+            "joshmoody\\Mock\\Entities\\": "src/Entities/"
 		}
 	},
 

@@ -24,6 +24,8 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	{
 		$person = $this->generator->getPerson();
 
+		$this->assertInstanceOf('joshmoody\Mock\Entities\Person', $person);
+
 		$this->assertObjectHasAttribute('guid', $person);
 		$this->assertObjectHasAttribute('unique_hash', $person);
 		$this->assertObjectHasAttribute('name', $person);
@@ -66,6 +68,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidDln()
 	{
 		$value = $this->generator->getDln();
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\DriverLicense', $value);
+
 		$this->assertObjectHasAttribute('number', $value);
 		$this->assertObjectHasAttribute('state', $value);
 		$this->assertObjectHasAttribute('expiration', $value);
@@ -79,6 +84,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidCreditCard()
 	{
 		$value = $this->generator->getCreditCard();
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\CreditCard', $value);
+
 		$this->assertObjectHasAttribute('type', $value);
 		$this->assertObjectHasAttribute('number', $value);
 		$this->assertObjectHasAttribute('expiration', $value);
@@ -90,6 +98,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidBankAccount()
 	{
 		$value = $this->generator->getBank();
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\BankAccount', $value);
+
 		$this->assertObjectHasAttribute('type', $value);
 		$this->assertObjectHasAttribute('name', $value);
 		$this->assertObjectHasAttribute('account', $value);
@@ -144,7 +155,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testGeneratesFullName()
 	{
 		$name = $this->generator->getFullName();
-		
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\FullName', $name);
+
 		$this->assertObjectHasAttribute('first', $name);
 		$this->assertObjectHasAttribute('middle', $name);
 		$this->assertObjectHasAttribute('last', $name);
@@ -172,6 +185,9 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testGeneratesAddress()
 	{
 		$address = $this->generator->getAddress();
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\Address', $address);
+
 		$this->assertObjectHasAttribute('line_1', $address);
 		$this->assertObjectHasAttribute('line_2', $address);
 		$this->assertObjectHasAttribute('city', $address);
@@ -183,6 +199,8 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testGeneratesInternet()
 	{
 		$internet = $this->generator->getInternet();
+
+		$this->assertInstanceOf('joshmoody\Mock\Entities\Internet', $internet);
 
 		$this->assertObjectHasAttribute('domain', $internet);
 		$this->assertObjectHasAttribute('email', $internet);

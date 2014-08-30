@@ -9,6 +9,7 @@ use joshmoody\Mock\Models\LastName;
 use joshmoody\Mock\Models\FirstName;
 use joshmoody\Mock\Models\Street;
 use joshmoody\Mock\Models\Zipcode;
+use joshmoody\Mock\Entities as Entities;
 
 use Exception;
 use StdClass;
@@ -232,11 +233,11 @@ class Generator
 	 * @param null $state_code
 	 * @param int $min
 	 * @param int $max
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\DriverLicense
 	 */
 	public function getDln($state_code = null, $min = 900000001, $max = 999999999)
 	{
-		$dln = new stdclass();
+		$dln = new Entities\DriverLicense();
 
 		$dln->number		= rand($min, $max);
 		$dln->state			= !empty($state_code) ? $state_code : $this->getState();
@@ -391,7 +392,7 @@ class Generator
 	 * Returns a Full Name
 	 *
 	 * @param string $gender.  Will be used to make sure both First and Middle Name are for same gender.
-	 * @return object Object with first, middle, last name and gender.	Gender included to avoid "A Boy Named Sue".
+	 * @return \joshmoody\Mock\Entities\FullName Gender included to avoid "A Boy Named Sue".
 	 */
 	public function getFullName($gender = null)
 	{
@@ -399,7 +400,7 @@ class Generator
 			$gender = $this->getGender();
 		}
 		
-		$person_name = new stdclass();
+		$person_name = new Entities\FullName;
 		$person_name->first		= $this->getFirstName($gender);
 		$person_name->middle	= $this->getMiddleName($gender);
 		$person_name->last		= $this->getLastName();
@@ -445,7 +446,7 @@ class Generator
 	 * Return a state
 	 *
 	 * @param null $state_code
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\State
 	 */
 	public function getState($state_code = null)
 	{
@@ -456,7 +457,7 @@ class Generator
 			$res = Zipcode::orderByRaw(Database::random())->first();
 		}
 		
-		$State = new stdclass();
+		$State = new Entities\State;
 		$State->code = $res->state_code;
 		$State->name = $res->state;
 		return $State;
@@ -494,11 +495,11 @@ class Generator
 	 *
 	 * @param null $state_code
 	 * @param null $zip
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\Address
 	 */
 	public function getAddress($state_code = null, $zip = null)
 	{
-		$address = new stdclass();
+		$address = new Entities\Address;
 
 		if (!empty($zip) && !empty($state_code)) {
 			$result = Zipcode::where('zip', $zip)->where('state_code', $state_code)->orderByRaw(Database::random())->first();
@@ -522,7 +523,7 @@ class Generator
 		$address->zip = $result->zip;
 		$address->county = $result->county;
 		
-		$address->state = new stdclass();
+		$address->state = new Entities\State;
 		$address->state->code = $result->state_code;
 		$address->state->name = $result->state;
 		
@@ -683,7 +684,7 @@ class Generator
 	 * @access public
 	 * @param mixed $person_name (default: null)
 	 * @param mixed $company (default: null)
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\Internet
 	 */
 	public function getInternet($person_name = null, $company = null)
 	{
@@ -691,7 +692,7 @@ class Generator
 			$person_name = $this->getFullName();
 		}
 		
-		$internet = new stdclass();
+		$internet = new Entities\Internet();
 		$internet->domain	= $this->getDomain($company);
 		$internet->username	= $this->getUserName($person_name);
 		$internet->email	= $this->getEmail($person_name, $internet->domain);
@@ -706,7 +707,7 @@ class Generator
 	 * 
 	 * @access public
 	 * @param mixed $weighted (default: true) - Make it more likely to return MasterCard or Visa
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\CreditCard
 	 */
 	public function getCreditCard($weighted = true)
 	{
@@ -730,7 +731,7 @@ class Generator
 			$card_types = ['American Express', 'Discover', 'MasterCard', 'Visa'];
 		}
 
-		$cc = new stdclass();
+		$cc = new Entities\CreditCard;
 				
 		$cc->type = $this->fromArray($card_types);
 
@@ -748,11 +749,11 @@ class Generator
 	 * Generate bank account information.
 	 * 
 	 * @access public
-	 * @return StdClass
+	 * @return \joshmoody\Mock\Entities\BankAccount
 	 */
 	public function getBank()
 	{
-		$bank_account = new stdclass();
+		$bank_account = new Entities\BankAccount;
 	
 		$bank_account->type = $this->fromArray(['Checking', 'Savings']);
 		$bank_account->name = $this->fromArray(['First National', 'Arvest', 'Regions', 'Metropolitan', 'Wells Fargo']);
@@ -768,13 +769,13 @@ class Generator
 	 * 
 	 * @access public
 	 * @param mixed $state_code (default: null)
-	 * @return object
+	 * @return \joshmoody\Mock\Entities\Person
 	 */
 	public function getPerson($state_code = null)
 	{
 		$state_code = !empty($state_code) ? $state_code : $this->getState()->code;
 		
-		$person = new stdclass();
+		$person = new Entities\Person;
 
 		$person->guid = $this->getGuid();
 		$person->unique_hash = $this->getUniqueHash();
