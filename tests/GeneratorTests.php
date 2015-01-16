@@ -40,7 +40,52 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('credit_card', $person);
 		$this->assertObjectHasAttribute('bank_account', $person);
 	}
-	
+
+	public function testGetStateForSpecificStateCodeReturnsExpectedResult()
+	{
+		$state = $this->generator->getState('AR');
+
+		$this->assertEquals($state->code, 'AR');
+		$this->assertEquals($state->name, 'Arkansas');
+	}
+
+	public function testGetZipForSpecificStateReturnsExpectedResult()
+	{
+		$zip = $this->generator->getZip('AR');
+		$this->assertTrue(strlen($zip) == 5);
+	}
+
+	public function testGetZipForRandomStateReturnsExpectedResult()
+	{
+		$zip = $this->generator->getZip();
+		$this->assertTrue(strlen($zip) == 5);
+	}
+
+	public function testGetCityForSpecificStateReturnsString()
+	{
+		$city = $this->generator->getCity('AR');
+		$this->assertTrue(is_string($city));
+	}
+
+	public function testGetCityForRandomStateReturnsString()
+	{
+		$city = $this->generator->getCity();
+		$this->assertTrue(is_string($city));
+	}
+
+	public function testGetAddressForSpecificZipWithoutStateReturnsExpectedCity()
+	{
+		$address = $this->generator->getAddress(null, '72034');
+
+		$this->assertEquals($address->city, 'Conway');
+	}
+
+	public function testGetUsernameWithNullPersonNameGeneratesRandomName()
+	{
+		$username = $this->generator->getUsername();
+		$this->assertTrue(is_string($username));
+	}
+
 	public function testValidFloat()
 	{
 		$value = $this->generator->getFloat();
@@ -93,6 +138,25 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 		
 		$this->assertRegExp($this->credit_card_regex, $value->number, 'Card number must be 15 or 16 digits.');
 		$this->assertRegExp($this->credit_card_expiration_date_regex, $value->expiration, 'Expiration date should be mm/yyyy format.');
+	}
+
+	public function testGetCreditCardForSpecificTypeReturnsExpectedValue()
+	{
+		$card = $this->generator->getBankNumber();
+		$this->assertTrue(strlen($card) == 16);
+
+		$card = $this->generator->getBankNumber('Visa');
+		$this->assertTrue(strlen($card) == 16);
+
+		$card = $this->generator->getBankNumber('Master Card');
+		$this->assertTrue(strlen($card) == 16);
+
+		$card = $this->generator->getBankNumber('Discover');
+		$this->assertTrue(strlen($card) == 16);
+
+		$card = $this->generator->getBankNumber('American Express');
+		$this->assertTrue(strlen($card) == 15);
+
 	}
 
 	public function testValidBankAccount()

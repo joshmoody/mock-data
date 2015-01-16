@@ -17,7 +17,10 @@ use DateTime;
 
 class Generator
 {
-
+	/**
+	 * @param array $opts
+	 * @codeCoverageIgnore
+	 */
 	public function __construct($opts = [])
 	{
 		if (is_array($opts) && array_key_exists('dsn', $opts)) {
@@ -145,6 +148,8 @@ class Generator
 	 * @param mixed $false Value that should be returned if false (default: false)
 	 * @param mixed $likely How likely is it (1-10) the result will be true?  1 = Always, 10 = Almost never.
 	 * @return mixed the result.
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function getBool($true = true, $false = false, $likely = 2)
 	{
@@ -431,13 +436,15 @@ class Generator
 	public function getApartment()
 	{
 		$types = ['Apt.', 'Apartment', 'Ste.', 'Suite', 'Box'];
-		
+
+		// @codeCoverageIgnoreStart
 		if ($this->getBool(true, false)) {
 			$extra = $this->getLetter();
 		} else {
 			$extra = $this->getInteger(1, 9999);
 		}
-		
+		// @codeCoverageIgnoreEnd
+
 		$type = $this->fromArray($types);
 		return $type . ' ' . $extra;
 	}
@@ -512,13 +519,15 @@ class Generator
 		}
 
 		$address->line_1 = $this->getStreet();
-		
+
+		// @codeCoverageIgnoreStart
 		if ($this->getBool(true, false)) {
 			$address->line_2 = $this->getApartment();
 		} else {
 			$address->line_2 = null;
 		}
-		
+		// @codeCoverageIgnoreEnd
+
 		$address->city = $result->city;
 		$address->zip = $result->zip;
 		$address->county = $result->county;
@@ -570,7 +579,8 @@ class Generator
 
 		// Get list of valid area codes for the state/zip code
 		$code_list = explode(',', $areacodes);
-		
+
+		// @codeCoverageIgnoreStart
 		// Add some toll free numbers into the mix.
 		if ($include_toll_free === true) {
 			$code_list[] = 800;
@@ -579,6 +589,7 @@ class Generator
 			$code_list[] = 866;
 			$code_list[] = 855;
 		}
+		// @codeCoverageIgnoreEnd
 		
 		// Get a random area code from valid area codes
 		$areacode	= $this->fromArray($code_list);
@@ -728,7 +739,9 @@ class Generator
 				}
 			}
 		} else {
+			// @codeCoverageIgnoreStart
 			$card_types = ['American Express', 'Discover', 'MasterCard', 'Visa'];
+			// @codeCoverageIgnoreEnd
 		}
 
 		$cc = new Entities\CreditCard;
@@ -781,7 +794,8 @@ class Generator
 		$person->unique_hash = $this->getUniqueHash();
 		
 		$person->name = $this->getFullName(); // Returns an object with first, middle, last, and gender properties
-		
+
+		// @codeCoverageIgnoreStart
 		if (rand(1, 100) % 5 == 0) {
 			// Self employed?  Name the business after them.
 			$person->company = $this->getCompanyName($person->name->last);
@@ -789,6 +803,7 @@ class Generator
 			// Generate some random company name.
 			$person->company = $this->getCompanyName();
 		}
+		// @codeCoverageIgnoreEnd
 
 		# Primary address
 		$person->address = $this->getAddress($state_code);
