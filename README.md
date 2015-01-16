@@ -1,7 +1,7 @@
 # Mock Data Generator
 Generate realistic test data.
 
-[![Build Status](https://travis-ci.org/joshmoody/mock-data.png?branch=master)](https://travis-ci.org/joshmoody/mock-data) [![Total Downloads](https://poser.pugx.org/joshmoody/mock-data/downloads.png)](https://packagist.org/packages/joshmoody/mock-data) [![Latest Stable Version](https://poser.pugx.org/joshmoody/mock-data/v/stable.png)](https://packagist.org/packages/joshmoody/mock-data)
+[![Source](https://img.shields.io/badge/source-joshmoody/mock--data-blue.svg?style=flat-square)](https://github.com/joshmoody/mock-data) [![Build Status](https://img.shields.io/travis/joshmoody/mock-data.svg?style=flat-square)](https://travis-ci.org/joshmoody/mock-data) [![Total Downloads](https://img.shields.io/packagist/dt/joshmoody/mock-data.svg?style=flat-square)](https://packagist.org/packages/joshmoody/mock-data) [![Latest Stable Version](https://img.shields.io/github/tag/joshmoody/mock-data.svg?label=version&style=flat-square)](https://packagist.org/packages/joshmoody/mock-data)
 
 ## Why?
 I work with very data-intensive applications. Sometimes I need large quantities of test data for building test cases and seeding web services, databases, online forms, etc.  I wrote this library to assist with this.
