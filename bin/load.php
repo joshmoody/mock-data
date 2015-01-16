@@ -2,6 +2,7 @@
 
 namespace joshmoody\Mock\Bin;
 
+use Illuminate\Support\Facades\Schema;
 use joshmoody\Mock\Models\Database;
 use joshmoody\Mock\Models\LastName;
 use joshmoody\Mock\Models\FirstName;
@@ -23,7 +24,7 @@ if ($argc > 1) {
 Database::init($opts);
 
 // Disable query log so we don't run out of memory logging all these inserts.
-DB::disableQueryLog();
+DB::connection('mock-data')->disableQueryLog();
 
 function get_filename($file)
 {
@@ -50,9 +51,9 @@ function extract_datafiles()
 function load_lastnames($limit = 500)
 {
 
-	if (!DB::schema()->hasTable('last_names'))
+	if (!DB::schema('mock-data')->hasTable('last_names'))
 	{
-		DB::schema()->create('last_names', function($table)
+		DB::schema('mock-data')->create('last_names', function($table)
 		{
 			# Define some fields.
 		    $table->increments('id');
@@ -100,9 +101,9 @@ function load_lastnames($limit = 500)
 
 function load_firstnames($limit = 500)
 {
-	if (!DB::schema()->hasTable('first_names'))
+	if (!DB::schema('mock-data')->hasTable('first_names'))
 	{
-		DB::schema()->create('first_names', function($table)
+		DB::schema('mock-data')->create('first_names', function($table)
 		{
 			# Define the fields.
 		    $table->increments('id');
@@ -193,9 +194,9 @@ function load_male_firstnames($limit = 500)
 
 function load_streets()
 {
-	if (!DB::schema()->hasTable('streets'))
+	if (!DB::schema('mock-data')->hasTable('streets'))
 	{
-		DB::schema()->create('streets', function($table)
+		DB::schema('mock-data')->create('streets', function($table)
 		{
 			# Define some fields.
 		    $table->increments('id');
@@ -231,9 +232,9 @@ function load_streets()
 
 function load_zipcodes()
 {
-	DB::schema()->dropIfExists('zipcodes');
-	
-	DB::schema()->create('zipcodes', function($table)
+	DB::schema('mock-data')->dropIfExists('zipcodes');
+
+	DB::schema('mock-data')->create('zipcodes', function($table)
 	{
 		# Define some fields.
 	    $table->increments('id');
@@ -276,6 +277,7 @@ function load_zipcodes()
 	
 	$counter = 0; // Total number records processed.
 	$loaded = 0; // Number records actually loaded.
+
 	while(!feof($fp)) {
 		
 		$counter++;
@@ -299,7 +301,7 @@ function load_zipcodes()
 			$notes
 		) = fgetcsv($fp);
 
-		// Skip heading row and everyting but standard zip codes for the 50 states and DC
+		// Skip heading row and everything but standard zip codes for the 50 states and DC
 		if ($counter > 1 && $type == 'STANDARD' && !in_array($state_code, ['GU','PR','VI'])) {
 
 			$loaded++;
@@ -349,4 +351,4 @@ print "Loaded $loaded streets\n";
 $loaded = load_zipcodes();
 print "Loaded $loaded zipcodes\n";
 
-DB::enableQueryLog();
+DB::connection('mock-data')->enableQueryLog();

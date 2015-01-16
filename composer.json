@@ -19,8 +19,8 @@
 
 	"require": {
 		"php": ">= 5.4",
-		"illuminate/database": "*",
-		"prelude/prelude-dsn": "*"
+	  	"illuminate/database": "4.2.*@dev",
+		"prelude/prelude-database": "0.0.3"
 	},
 
 	"require-dev": {

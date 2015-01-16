@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LastName extends Model
 {
+	public $connection = 'mock-data';
 	public $timestamps = false;
 }
