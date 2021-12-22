@@ -16,15 +16,27 @@
 			"joshmoody\\Mock\\Entities\\": "src/Entities/"
 		}
 	},
-
-	"require": {
-		"php": ">= 5.4",
-	  	"illuminate/database": "4.2.*@dev",
-		"prelude/prelude-database": "0.0.3"
+	"config": {
+		"platform": {
+			"php": "7.2"
+		}
 	},
-
+	"require": {
+		"php": ">=7.2",
+		"simpl/sql": "^1.3",
+		"ext-pdo": "*"
+	},
 	"require-dev": {
-	  	"phpunit/phpunit": "4.4.*",
-		"squizlabs/php_codesniffer": "1.*"
+		"symfony/var-dumper": "^4.4",
+		"phpunit/phpunit": "^8.5",
+		"squizlabs/php_codesniffer": "^3.6"
+	},
+	"scripts": {
+		"test": [
+			"vendor/bin/phpunit --testsuite=Unit"
+		],
+		"integration-test": [
+			"php tests/Integration/IntegrationTests.php"
+		]
 	}
 }

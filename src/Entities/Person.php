@@ -8,46 +8,48 @@ class Person
 	public $unique_hash;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\Name
+	 * @var FullName
 	 */
 	public $name;
 
 	public $company;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\Address
+	 * @var Address
 	 */
 	public $address;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\Address
+	 * @var Address
 	 */
 	public $address2;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\Internet
+	 * @var Internet
 	 */
 	public $internet;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\Phone
+	 * @var Phone
 	 */
 	public $phone;
 
 	public $ssn;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\DriverLicense
+	 * @var DriverLicense
 	 */
 	public $dln;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\CreditCard
+	 * @var CreditCard
 	 */
 	public $credit_card;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\BankAccount
+	 * @var BankAccount
 	 */
 	public $bank_account;
+
+	public $dob;
 }

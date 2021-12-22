@@ -1,11 +1,14 @@
 <?php
 
-namespace joshmoody\Mock\Tests;
+namespace joshmoody\Mock\Tests\Unit;
 
+use joshmoody\Mock\Entities\Internet;
+use joshmoody\Mock\Entities\Person;
 use joshmoody\Mock\Generator;
 use joshmoody\Mock\Models\Database;
+use PHPUnit\Framework\TestCase;
 
-class GeneratorTests extends \PHPUnit_Framework_TestCase
+class UnitTests extends TestCase
 {
 	public $generator;
 	public $date_regex = '/^((19|20))\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
@@ -14,17 +17,16 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public $ssn_regex = '/^\d{9}$/';
 	public $phone_regex = '/^\d{3}-\d{3}-\d{4}$/';
 
-	public function __construct()
+	public function setUp() : void
 	{
-		$dsn = Database::parseDsn(getenv('dsn'));
-		$this->generator = new Generator(['dsn' => $dsn]);
+		$this->generator = new Generator();
 	}
-	
+
 	public function testGeneratesPerson()
 	{
 		$person = $this->generator->getPerson();
 
-		$this->assertInstanceOf('joshmoody\Mock\Entities\Person', $person);
+		$this->assertInstanceOf(Person::class, $person);
 
 		$this->assertObjectHasAttribute('guid', $person);
 		$this->assertObjectHasAttribute('unique_hash', $person);
@@ -89,7 +91,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidFloat()
 	{
 		$value = $this->generator->getFloat();
-		$this->assertInternalType('float', $value);
+		$this->assertIsFloat($value);
 	}
 	
 	public function testValidSsn()
@@ -199,7 +201,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidInteger()
 	{
 		$value = $this->generator->getInteger();
-		$this->assertInternalType('integer', $value);
+		$this->assertIsInt($value);
 	}
 
 	public function testValidIntegerRange()
@@ -243,7 +245,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testGeneratesFirstNameNoGender()
 	{
 		$name = $this->generator->getFirstName();
-		$this->assertInternalType('string', $name);
+		$this->assertIsString($name);
 	}
 	
 	public function testGeneratesAddress()
@@ -264,7 +266,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	{
 		$internet = $this->generator->getInternet();
 
-		$this->assertInstanceOf('joshmoody\Mock\Entities\Internet', $internet);
+		$this->assertInstanceOf(Internet::class, $internet);
 
 		$this->assertObjectHasAttribute('domain', $internet);
 		$this->assertObjectHasAttribute('email', $internet);
@@ -300,7 +302,7 @@ class GeneratorTests extends \PHPUnit_Framework_TestCase
 	public function testValidString()
 	{
 		$value = $this->generator->getString();
-		$this->assertInternalType('string', $value);
+		$this->assertIsString($value);
 	}
 
 	public function testValidStringLettersOnly()
