@@ -44,6 +44,9 @@
 		],
 		"integration-test": [
 			"php tests/Integration/IntegrationTests.php"
+		],
+		"reload": [
+			"php bin/load.php"
 		]
 	}
 }
