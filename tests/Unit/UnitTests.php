@@ -124,7 +124,7 @@ class UnitTests extends TestCase
 	}
 	
 	public function testValidBirthDate(){
-		$value = $this->generator->getBirthDate();
+		$value = $this->generator->getBirthDate()->format('Y-m-d');
 		$this->assertRegExp($this->date_regex, $value);
 	}
 	
@@ -331,13 +331,13 @@ class UnitTests extends TestCase
 	
 	public function testGetDateNoMinYear()
 	{
-		$value = $this->generator->getDate(['max_year' => date('Y')], 'Y');
+		$value = $this->generator->getDateFormatted(['max_year' => date('Y')], 'Y');
 		$this->assertGreaterThanOrEqual(date('Y') - 2, $value);
 	}
 
 	public function testGetDateNoMaxYear()
 	{
-		$value = $this->generator->getDate(['min_year' => date('Y')], 'Y');
+		$value = $this->generator->getDateFormatted(['min_year' => date('Y')], 'Y');
 		$this->assertLessThanOrEqual(date('Y'), $value);
 	}
 }

@@ -70,7 +70,7 @@ class Generator
 	}
 
 	/**
-	 *    Generate random string.
+	 * Generate random string.
 	 *
 	 * @access public
 	 * @param string $type Options: letter, number, or mix.     default: letter
@@ -100,7 +100,7 @@ class Generator
 	}
 
 	/**
-	 * Generate a random number between $min and $max
+	 * Generate a random integer between $min and $max
 	 *
 	 * @param int $min
 	 * @param int $max
@@ -796,16 +796,26 @@ class Generator
 	public function getExpiration($format = 'm/Y'): string
 	{
 		$date_params = ['min_year' => date('Y'), 'max_year' => date('Y') + 3];
-		return $this->getDate($date_params, $format);
+		return $this->getDateFormatted($date_params, $format);
+	}
+
+	/**
+	 * Generate random date, formatted.
+	 * @param array $params
+	 * @param string $format = Y-m-d
+	 * @return string
+	 */
+	public function getDateFormatted($params = [], $format = 'Y-m-d') : string
+	{
+		return $this->getDate($params)->format($format);
 	}
 
 	/**
 	 * Generate a random date.
 	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
-	 * @param string $format date() format for return value.  Default: Y-m-d
-	 * @return string formatted date string.
+	 * @return DateTime
 	 */
-	public function getDate($params = [], $format = 'Y-m-d'): string
+	public function getDate($params = [], $format = 'Y-m-d'): DateTime
 	{
 		foreach ($params as $k => $v) {
 			$$k = $v;
@@ -840,21 +850,20 @@ class Generator
 		// Pick a day of the month.
 		$rand_day = rand(1, $days_in_month);
 
-		return DateTime::createFromFormat('Y-m-d', join('-', [$rand_year, $rand_month, $rand_day]))->format($format);
+		return DateTime::createFromFormat('Y-m-d', join('-', [$rand_year, $rand_month, $rand_day]));
 	}
 
 	/**
-	 * Generate a reasonable birth date.     Default Age: 20-80 years.
+	 * Generate a reasonable birth date. Default Age: 20-80 years.
 	 *
 	 * @param array $params Associative array with following keys: minYear, maxYear, minMonth, maxMonth
-	 * @param string $format date() format for return value.  Default: Y-m-d
-	 * @return string formatted date string.
+	 * @return DateTime
 	 */
-	public function getBirthDate($params = [], $format = 'Y-m-d'): string
+	public function getBirthDate($params = []): DateTime
 	{
 		$params['min_year'] = array_key_exists('min_year', $params) ? $params['min_year'] : date('Y') - 80;
 		$params['max_year'] = array_key_exists('max_year', $params) ? $params['max_year'] : date('Y') - 20;
-		return $this->getDate($params, $format);
+		return $this->getDate($params);
 	}
 
 	/**
