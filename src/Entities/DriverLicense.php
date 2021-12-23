@@ -7,7 +7,7 @@ class DriverLicense
 	public $number;
 
 	/**
-	 * @var \joshmmody\Mock\Entities\State;
+	 * @var State
 	 */
 	public $state;
 

@@ -11,7 +11,7 @@ class Address
 	public $county;
 
 	/**
-	 * @var \joshmoody\Mock\Entities\State
+	 * @var State
 	 */
 	public $state;
 }

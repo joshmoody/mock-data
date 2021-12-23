@@ -123,7 +123,12 @@ joshmoody\Mock\Entities\Person Object
             [routing] => 075938878
         )
 
-    [dob] => 1968-08-12
+    [dob] => DateTime Object
+        (
+            [date] => 1994-05-13 03:56:44.000000
+            [timezone_type] => 3
+            [timezone] => UTC
+        )
 )
 ```
 
@@ -311,52 +316,25 @@ $aye_nay = $generator->getBool('Aye', 'Nay'); // returns string(Aye) or string (
 
 ## Requirements
 - MySQL or SQlite
-- PHP >= 5.4 with MySQL _or_ SQlite PDO extension.
+- PHP >= 7.2 with SQlite PDO extension.
 
 ## Installation
 Installation of this package is easy with Composer. If you aren't familiar with the Composer Dependency Manager for PHP, [you should read this first](https://getcomposer.org/doc/00-intro.md).
 
-If you don't already have [Composer](https://getcomposer.org) installed (either globally or in your project), you can install it like this:
-
-	$ curl -sS https://getcomposer.org/installer | php
-
-Create a file named composer.json somewhere in your project with the following content:
-
-``` json
-{
-    "require": {
-        "joshmoody/mock-data": "dev-master"
-    }
-}
+```
+composer require joshmoody/mock-data
 ```
 
-## Zero Configuration Instructions - SQLite
+## Zero Configuration Instructions
 The package ships with a sqlite database containing all the data needed for generating random records.
-
-To use the default sqlite database, call the constructor without passing an options array.
 	
 ``` php
 $generator = new joshmoody\Mock\Generator();
 ```
 
-## Easy Configuration Instructions - MySQL
-Run the load script in bin/load.php and pass a dsn string (eg mysql://username:password@host/dbname) as the first parameter to the script.
-
-``` bash
-$ php bin/load.php mysql://root:root@localhost/mock
-```
-
-> NOTE: The database must already exist. The script will create the tables in that database.
-
-Once the script has set up the database tables, you can pass in your dsn string when calling the constructor.
-
-``` php
-$generator = new joshmoody\Mock\Generator(['dsn' => 'mysql://root:root@localhost/mock']);
-```
-
 ## Reloading Data
-You can use the load script above to regenerate the sqlite database at any time. Run it the same as the MySQL
-Instructions above, but without any parameters. This may be useful if modifying the source data to better fit your needs.
+You can use the load script to regenerate the sqlite database at any time.
+This may be useful if modifying the source data to better fit your needs.
 
 ``` bash
 $ php bin/load.php

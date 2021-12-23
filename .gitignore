@@ -6,3 +6,4 @@
 /data/*.csv
 /tests/coverage-report
 .idea
+/.phpunit.result.cache
