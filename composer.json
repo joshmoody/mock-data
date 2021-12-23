@@ -11,11 +11,17 @@
 	],
 	"autoload":{
 		"psr-4":{
-			"joshmoody\\Mock\\Tests\\": "tests/",
-			"joshmoody\\Mock\\": "src/",
-			"joshmoody\\Mock\\Entities\\": "src/Entities/"
+			"joshmoody\\Mock\\": "src/"
 		}
 	},
+
+	"autoload-dev":{
+		"psr-4":{
+			"joshmoody\\Mock\\Tests\\": "tests/",
+			"joshmoody\\Mock\\Console\\": "bin/"
+		}
+	},
+
 	"config": {
 		"platform": {
 			"php": "7.2"
@@ -29,7 +35,8 @@
 	"require-dev": {
 		"symfony/var-dumper": "^4.4",
 		"phpunit/phpunit": "^8.5",
-		"squizlabs/php_codesniffer": "^3.6"
+		"squizlabs/php_codesniffer": "^3.6",
+		"ext-zip": "*"
 	},
 	"scripts": {
 		"test": [

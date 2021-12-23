@@ -18,7 +18,6 @@ use StdClass;
 
 class Generator
 {
-
 	/**
 	 * @var SQL
 	 */
@@ -41,7 +40,7 @@ class Generator
 		if (empty($this->sql)) {
 			$dsn = [
 				'prefix' => 'sqlite',
-				'path' => __DIR__ . '/../data/database.sqlite'
+				'path' => __DIR__ . '/../storage/database.sqlite'
 			];
 
 			$this->sql = new SQL($dsn);
